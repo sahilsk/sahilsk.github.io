@@ -23,7 +23,7 @@ I enjoy water rappelling, trekking & hiking, digital photography and travelling 
 Kindly, let me join your crew if you're planning any similar activity this weekend and happened to live nearby me.(New Delhi, India)
 
 ## This blog is all about ..
-..topics that interest me. Most posts will be around Development and operation. Here you'll find posts written around technologies involving *Docker**, **Chef**, **Elasticsearch**, **ELK Stack**, **node.js**, **AngularJS** and many more.
+..topics that interest me. Most posts will be around Development and operation. Here you'll find posts written around technologies involving **Docker**, **Chef**, **Elasticsearch**, **ELK Stack**, **node.js**, **AngularJS** and many more.
 
 <a markdown="0" href="{{ site.url }}/articles" class="btn"> Browse Articles </a>
 
