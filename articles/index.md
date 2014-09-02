@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Sample Articles
+title: Articles
 excerpt: "An archive of articles sorted by date."
 image:
   feature: vrindavan-gobardhan-yatra-02.jpg
