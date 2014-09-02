@@ -28,4 +28,4 @@ Kindly, let me join your crew if you're planning any similar activity this weeke
 <a markdown="0" href="{{ site.url }}/articles" class="btn"> Browse Articles </a>
 
 [^1]: Example: *domain.com/category-name/post-title*
-[LinkedIn]: https://github.com/jekyll/jekyll
+[LinkedIn]: http://in.linkedin.com/in/sahilsk
