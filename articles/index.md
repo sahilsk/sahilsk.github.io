@@ -5,7 +5,7 @@ excerpt: "An archive of articles sorted by date."
 image:
   feature: vrindavan-gobardhan-yatra-02.jpg
   credit: me :)
-  creditlink: https://www.flickr.com/photos/95959458@N02/15112945591/
+  creditlink: https://www.flickr.com/photos/95959458@N02/14929455577/
   avatar: sahilsk.jpg
 ---
 
