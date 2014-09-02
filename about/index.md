@@ -10,11 +10,15 @@ image:
   avatar: sahilsk.jpg
 ---
 
+## About Me
 I am Sonu Kumar Meena: Full stack developer and architect interested in **automation**, **scalability**, **performance** and **distributed systems**.
-Contact me if you're looking for any sort of consulting on your current infrastructure. I might be able to assist your messed up infra.
+I love working on random side projects and catching up on the latest web trends via tech blogs.
 
-## So Simple Theme is all about:
+I'm currently working at Stackexpress.com. If you'd like, you can keep updated with what I'm working on over at my blog. I'm always interested in learning about what people are working on in new startups, though, so feel free to shoot me an email if you want to chat!
 
+I tweet and blog about amusing and geeky things, but you can also reach me via [LinkedIn][https://www.linkedin.com/pub/sonu-meena/77/775/383], or <a href="mailto:sonukr666@gmail.com">email</a>.
+
+## This blog all about ...
 
 <a markdown="0" href="{{ site.url }}/articles" class="btn"> Browse Articles </a>
 
