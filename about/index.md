@@ -18,7 +18,10 @@ I'm currently working at Stackexpress.com. If you'd like, you can keep updated w
 
 I tweet and blog about amusing and geeky things, but you can also reach me via [LinkedIn][https://www.linkedin.com/pub/sonu-meena/77/775/383], or <a href="mailto:sonukr666@gmail.com">email</a>.
 
-## This blog all about ...
+## Interest & Hobbies
+I enjoy water rappelling, trekking & hiking, digital photography and travelling a lot.
+
+## This blog is all about ...
 
 <a markdown="0" href="{{ site.url }}/articles" class="btn"> Browse Articles </a>
 
