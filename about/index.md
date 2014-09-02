@@ -7,6 +7,7 @@ image:
   feature: vrindavan-gobardhan-yatra-01.jpg
   credit: me :)
   creditlink: https://www.flickr.com/photos/95959458@N02/15112945591/
+  avatar: sahilsk.jpg
 ---
 
 Looking for a simple, responsive, theme for your Jekyll powered blog? Well look no further. Here be **So Simple Theme**, the follow up to [**Minimal Mistakes**](http://mmistakes.github.io/minimal-mistakes) --- by designer slash illustrator [Michael Rose](http://mademistakes.com).
