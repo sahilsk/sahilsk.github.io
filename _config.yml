@@ -1,11 +1,11 @@
 # Site wide configuration
 
-title: Site Title
+title: DevOps Story
 locale: en_US
-description: Describe your website here.
+description: ..Daily DevOps Chores
 logo: site-logo.png
 search: true
-url:
+url: http://sahilsk.github.io
 
 
 # Jekyll configuration
