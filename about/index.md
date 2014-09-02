@@ -1,12 +1,12 @@
 ---
 layout: page
 title: About Me
-excerpt: "So Simple is a responsive Jekyll theme for your words and images."
+excerpt: "DevOps Engineer: Building Automated Infrastructure"
 modified: 2014-08-08T19:44:38.564948-04:00
 image:
   feature: vrindavan-gobardhan-yatra-01.jpg
-  credit: WeGraphics
-  creditlink: http://wegraphics.net/downloads/free-ultimate-blurred-background-pack/
+  credit: me :)
+  creditlink: https://www.flickr.com/photos/95959458@N02/15112945591/
 ---
 
 Looking for a simple, responsive, theme for your Jekyll powered blog? Well look no further. Here be **So Simple Theme**, the follow up to [**Minimal Mistakes**](http://mmistakes.github.io/minimal-mistakes) --- by designer slash illustrator [Michael Rose](http://mademistakes.com).
