@@ -4,7 +4,8 @@ title: "Hello World"
 modified:
 categories: articles
 excerpt:
-tags: []
+tags: ['first post']
+share: true
 image:
   feature:
 date: 2014-09-03T08:30:00+05:30
