@@ -2,14 +2,14 @@
 layout: post
 title: "Hello World"
 modified:
-categories: article
+categories: articles
 excerpt:
-tags: ['first post','hello world']
-comments: true
+tags: []
 image:
   feature:
-date: 2014-09-02
+date: 2014-09-03T08:30:00+05:30
 ---
+
 
 You'll find this post in your `_posts` directory - edit this post and re-build (or run with the `-w` switch) to see your changes!
 To add new posts, simply add a file in the `_posts` directory that follows the convention: YYYY-MM-DD-name-of-post.ext.

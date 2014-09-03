@@ -2,7 +2,7 @@
 layout: about
 title: About Me
 excerpt: "DevOps Engineer: Building Automated Infrastructure"
-modified: 2014-08-08T19:44:38.564948-04:00
+modified: 2014-09-03T08:30:00+05:30
 image:
   feature: vrindavan-gobardhan-yatra-01.jpg
   credit: me :)
