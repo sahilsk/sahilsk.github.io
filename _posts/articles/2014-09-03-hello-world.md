@@ -5,6 +5,7 @@ modified:
 categories: articles
 excerpt:
 tags: ['first post']
+comments: true
 share: true
 image:
   feature:
