@@ -7,8 +7,17 @@
 		        {% else %}
 		        {% assign domain = site.url %}
 		    {% endif %}
-		    <li><a href="{{ domain }}{{ link.url }}" {% if link.url contains 'http' %}target="_blank"{% endif %}>{{ link.title }}</a></li>
-		  {% endfor %}
+		  	{% if link.url contains 'feed' %}
+					<li><a href="{{ domain }}{{ link.url }}" target="_blank" > <i class="fa fa-rss"></i> {{ link.title }}</a></li>
+				{% elsif link.url contains 'articles' %}
+					<li><a href="{{ domain }}{{ link.url }}" {% if link.url contains 'http' %}target="_blank"{% endif %}> <i class="fa fa-tasks"></i> {{ link.title }}</a></li>
+				{% elsif link.url contains 'about' %}
+					<li><a href="{{ domain }}{{ link.url }}" {% if link.url contains 'http' %}target="_blank"{% endif %}> <i class="fa fa-child"></i> {{ link.title }}</a></li>					
+
+				{% else %}
+					<li><a href="{{ domain }}{{ link.url }}" {% if link.url contains 'http' %}target="_blank"{% endif %}> {{ link.title }}</a></li>
+				{% endif %}
+			{% endfor %}
         {% if site.search %}<li class="dosearch"><i class="fa fa-search"></i> Search</li>{% endif %}
 	    </ul>
 	</nav>
