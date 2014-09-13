@@ -16,7 +16,7 @@ I love working on random side projects and catching up on the latest web trends 
 
 I'm currently working at Stackexpress.com. If you'd like, you can keep updated with what I'm working on over at my blog. I'm always interested in learning about what people are working on in new startups, though, so feel free to shoot me an email if you want to chat!
 
-I tweet and blog about amusing and geeky things, but you can also reach me via [LinkedIn][LinkedIn], or <a href="mailto:sonukr666@gmail.com">email</a>.
+I tweet and blog about amusing and geeky things, but you can also reach me via [LinkedIn][LinkedIn], or <a href="mailto:sonukr.meena@gmail.com">email</a>.
 
 ## Interest & Hobbies
 I enjoy water rappelling, trekking & hiking, digital photography and travelling a lot.
