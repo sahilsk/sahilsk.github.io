@@ -35,13 +35,16 @@ Q. Any performance impact when runng inside Container?
 ---
 
 In docker, cpu performance is native, disk latency is native,
-memory is not native but could be made. Nowadays hardware are cheap but software are costly. So, we don't need to worry about little memory that Docker keep aside. If you really want to squash every single drop, then there are ways to do so. Network latency also can be made as fast as of native. This small minor reduction we can bear.
+memory is not native but could be made. Same is true for network latency.
+
+Nowadays hardware are cheap but software are costly. So, we don't need to worry about little memory that Docker keep aside. If you really want to squash every single drop, then there are ways to do so. Network latency also can be made as fast as of native. This small minor reduction we can bear.
 
 So, having compromised with Memory and Network latency, we're proceeding to Dockerize MySQL instance.
 
 Luckily, there is already mysql Dockerfile ready in the docker hub: [MySQL Dockerfile](https://github.com/dockerfile/mysql) 
 
 
+{% highlight json %}
 dockerfile/mysql 
 ```
 #
@@ -77,8 +80,9 @@ CMD ["mysqld_safe"]
 
 # Expose ports.
 EXPOSE 3306
-```
 
+{% endhighlight %}
 
+Dockerfile is quite simple
 
 
