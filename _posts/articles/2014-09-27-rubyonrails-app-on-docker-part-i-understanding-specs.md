@@ -36,11 +36,10 @@ Let me break down the word "Deployment" as per DevOps dictionary:
 - Setup Database : MySQL
 - Pre-compile Assets and configure db settings
 
-Wait, there's more. 
-`How will you scale your application?` `How will you ensure High availability(further onwards as HA) of your service and commit 99.9999% uptime to your customers?`
+Wait, there's more. How will you `scale` your application? How will you ensure `High availability`(further onwards as HA) of your service and commit 99.9999% uptime to your customers?
 
-- SCALABILITY
-    
+- `SCALABILITY`
+
     If you application is based on [12 factors](http://12factor.net)  commandment , then your app is likely to be scalable. If you don't know these 12 factors, i strongly suggest you to visit the [site](http://12factor.net) and skim it in one go.
     
     Expanding further, Apps can be of two type:
@@ -54,7 +53,7 @@ Wait, there's more.
         Stateful application, like Databases, are comparatively difficult to scale. However,  some database does provide clustering and sharding, out of the box. You'll  like to consider this criteria while making DBMS decision for your app.
         
 
-- HIGH AVAILABILITY
+- `HIGH AVAILABILITY`
 
     With the advancement in technology, Zero Downtime deployment is no longer a dream. If your infrastructure is not yet support zzero downtime deployment, then indeed you're living in Rock age. 12 factors app also enable you to have zero  downtime of your production infrastructure. 
     
