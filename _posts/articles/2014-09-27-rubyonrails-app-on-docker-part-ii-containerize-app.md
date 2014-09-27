@@ -44,9 +44,9 @@ So, having compromised with Memory and Network latency, we're proceeding to Dock
 Luckily, there is already mysql Dockerfile ready in the docker hub: [MySQL Dockerfile](https://github.com/dockerfile/mysql) 
 
 
-{% highlight json %}
 dockerfile/mysql 
-```
+{% highlight bash linenos %}
+
 #
 # MySQL Dockerfile
 #
