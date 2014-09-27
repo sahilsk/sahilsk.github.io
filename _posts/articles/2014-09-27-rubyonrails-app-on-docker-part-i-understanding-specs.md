@@ -10,7 +10,7 @@ image:
 date: 2014-09-27T15:12:48+05:30
 ---
 
-RubyOnRails App On docker: Part-I) Introduction
+RubyOnRails App On docker: Part-I:: Introduction
 ===============
 
 In this post, I'll try to pen down steps to deploy RubyOnRails using Docker.
@@ -30,12 +30,14 @@ Coming to the post, let me paraphrase the title of this article:
 
 
 Let me break down the word "Deployment" as per DevOps dictionary:
+
 - Setup and configure Unicorn
 - Setup and configure Reverse Proxy: Nginx
 - Setup Database : MySQL
 - Pre-compile Assets and configure db settings
 
-Wait, there's more. How will you scale your application? How will you ensure High availability(further onwards as HA) of your service and commit 99.9999% uptime to your customers?
+Wait, there's more. 
+`How will you scale your application?` `How will you ensure High availability(further onwards as HA) of your service and commit 99.9999% uptime to your customers?`
 
 - SCALABILITY
     
@@ -65,4 +67,4 @@ Wait, there's more. How will you scale your application? How will you ensure Hig
 
 2. Logs Management
 
-    Logs are no longer neglected in today's age of Big-Data. Management need information to aid their decisions. Logs help them provide those inputs. These inputs can be Geographical, or User browsing or buying trend All gathered from logs.
+    Logs are no longer neglected in today's age of Big-Data. Management need information to aid their decisions. Logs help them provide those inputs. These inputs can be Geographical, or User browsing or buying trend, all gathered from logs.
