@@ -12,7 +12,7 @@ image:
 date: 2014-09-27T15:12:48+05:30
 ---
 
-RubyOnRails App On docker: Part-I:: Introduction
+RubyOnRails App On Docker: Part-I What are we doing?
 ===============
 
 In this post, I'll try to pen down steps to deploy RubyOnRails using Docker.
