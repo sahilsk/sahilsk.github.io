@@ -85,9 +85,9 @@ Now, having knowns the full requirement, we'll visit them one by one in this ser
 
 	Understanding the full deployment requirement.
 
-2. Part-II : How we are doing?
+2. Part-II : How are we doing?
 
-	This part will include 
+	This part will include: 
 
 	-	Setup and Installation of Database
 	-	Containerize RoR App with webserver
