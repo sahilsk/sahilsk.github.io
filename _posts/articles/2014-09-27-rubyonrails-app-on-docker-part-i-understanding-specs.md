@@ -89,9 +89,9 @@ Now, having knowns the full requirement, we'll visit them one by one in this ser
 
 	This part will include 
 
-		- Setup and Installation of Database
-		- Containerize RoR App with webserver
-		- Reverse Proxy : Why and How?
+	-	Setup and Installation of Database
+	-	Containerize RoR App with webserver
+	-	Reverse Proxy : Why and How?
 
 3. Parth-III : Conclusion
 
