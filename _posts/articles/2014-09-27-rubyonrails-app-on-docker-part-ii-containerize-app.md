@@ -135,32 +135,30 @@ Index
 
  	Setting `DATABASE_URL` environment variable will take precendence of config file params, & merge with config files to populate db connection setting. 
 
- 	### Web Server for RoR
+ 	### Web Server for RoR: Unicorn
 
  		We'll choose widely adopted Unicorn as our web server.
 
+ 		`unicorn.rb` :
  		{% highlight bash linenos %}
 			# Set the working application directory
 			# working_directory "/path/to/your/app"
 			working_directory "/opt/dailyReport"
 
 			# Unicorn PID file location
-			# pid "/path/to/pids/unicorn.pid"
-			pid "/opt/dailyReport/pids/unicorn.pid"
+			pid "/tmp/myApp/unicorn.pid"
 
 			# Path to logs
-			# stderr_path "/path/to/log/unicorn.log"
-			# stdout_path "/path/to/log/unicorn.log"
-			stderr_path "/opt/dailyReport/log/unicorn.log"
-			stdout_path "/opt/dailyReport/log/unicorn.log"
+			stderr_path "/var/log/myApp/unicorn.log"
+			stdout_path "/var/log/myApp/unicorn.log"
 
 			# Unicorn socket
 			listen "/tmp/unicorn.dailyReport.sock"
 
 			# Number of processes
-			# worker_processes 4
 			worker_processes 2
 
 			# Time-out
 			timeout 30
  		{% highlight bash %}
+
