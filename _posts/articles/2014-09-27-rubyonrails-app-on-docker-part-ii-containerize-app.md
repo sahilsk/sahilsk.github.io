@@ -164,6 +164,6 @@ worker_processes 2
 
 # Time-out
 timeout 30
-{% highlight bash %}
+{% endhighlight  %}
 
 NOTE: path will make sense ahead. So, just skim, don't mull over them.
