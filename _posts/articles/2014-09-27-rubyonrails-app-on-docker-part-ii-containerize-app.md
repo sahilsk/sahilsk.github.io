@@ -140,7 +140,7 @@ Index
  		We'll choose widely adopted Unicorn as our web server.
 
  		`unicorn.rb` :
- 		{% highlight bash linenos %}
+ 		{% highlight ruby linenos %}
 			# Set the working application directory
 			# working_directory "/path/to/your/app"
 			working_directory "/opt/dailyReport"
@@ -161,4 +161,30 @@ Index
 			# Time-out
 			timeout 30
  		{% highlight bash %}
+
+NOTE: path will make sense ahead. So, just skim, don't mull over them.
+
+	#### How will we start our app?
+
+	{% highlight bash %}
+		cd to/app/directory
+		pkill unicorn_rails
+		# clear any tmp file
+		rm -rf tmp/*
+		# Spank up unicorn ;)
+		unicorn_rails -c /etc/myApp/unicorn.rb -E production -D
+	{% endhighlight %}
+
+	let's wrap these lines inside `run.sh` file which will serve as our app startup script.
+
+	We wrote `run.sh`,and `unicorn.rb` file. Replaced hardcoded database, SMTP and 3rd party credentials with environment variables.
+	Having created unicorn config file, we now need to wrap our app and unicorn in a container.
+	
+	`Dockerfile`
+
+	{% highlight bash linenos %}
+
+
+	{% endhighlight %}
+
 
