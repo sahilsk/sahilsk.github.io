@@ -167,3 +167,101 @@ timeout 30
 {% endhighlight  %}
 
 NOTE: path will make sense ahead. So, just skim, don't mull over them.
+
+
+
+#### How will we start our app?
+
+{% highlight bash %}
+	cd to/app/directory
+	pkill unicorn_rails
+	# clear any tmp file
+	rm -rf tmp/*
+	# Spank up unicorn ;)
+	unicorn_rails -c /etc/myApp/unicorn.rb -E production -D
+{% endhighlight %}
+
+let's wrap these lines inside `run.sh` file which will serve as our app startup script.
+
+We wrote `run.sh`,and `unicorn.rb` file. Replaced hardcoded database, SMTP and 3rd party credentials with environment variables.
+Having created unicorn config file, we now need to wrap our app and unicorn in a container.
+
+
+Let's create our base Dockerfile. It'll contain:
+
+- ruby 2.1.2
+
+	ruby 1.9.x EOL is near. The newer 2.1.x version is comparatively fast, and bug free.
+	We'll use rbenv for install ruby. It'll also help us to update ruby version without re-building docker image. 
+	{% highlight %}
+	# Start the containre
+	docker run -it myDockerfiles/rubyBaseImg
+		rbenv local x.x.x
+		rbenv global x.x.x
+		rbenv rehash
+		echo rbenv -v
+		exit
+	docker commit -m "ruby updated to x.x.x"   myDockerfiles/rubyBaseImg_x.x.x
+	{% endhighlight %}
+
+
+`myDockerfiles/base/Dockerfile`
+
+{% highlight bash linenos %}
+	#
+	# Ruby with rbenv Dockerfile
+	#
+	
+	# Pull base image.
+	FROM dockerfile/ubuntu	
+
+	# Install some dependencies
+	RUN apt-get update
+	RUN apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties
+	
+	# Install rbenv for install ruby
+	RUN git clone git://github.com/sstephenson/rbenv.git .rbenv
+	RUN echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+	RUNecho 'eval "$(rbenv init -)"' >> ~/.bashrc
+	exec $SHELL
+
+	# Install rbenv plugin: ruby-build
+	RUN git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+	RUN echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
+	RUN exec $SHELL
+
+	# Install ruby
+	RUN rbenv install 2.1.2
+	RUN rbenv global 2.1.2
+
+	# Let's not copy gem package documentation
+	RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc
+
+	## Install Rails
+	RUN apt-get install software-properties-common
+	RUN add-apt-repository ppa:chris-lea/node.js
+	RUN apt-get update
+	RUN apt-get install nodejs
+
+	## Finally, install Rails
+	RUN gem install rails
+	RUN rbenv rehash
+
+	CMD /bin/bash
+
+{% endhighlight %}
+
+Let's build and tag it
+
+{%  highlight bash %}
+	docker build -t "myDockerfiles/baseRubyImg"
+	# Run and test
+	docker run -it --rm  myDockerfiles/baseRubyImg /bin/bash -c 'ruby -v'
+{% endhighlight %}
+
+
+Finally, let's containerize our ror app.
+
+{% highlight bash linenos %}
+
+{% endhighlight %}
