@@ -81,14 +81,183 @@ Index
 	EXPOSE 3306
 	{% endhighlight %}
 
-	Dockerfile is quite simple. Isn't it? In starting few lines, we're installing mysql server and granting user root all privileges.
+Dockerfile is quite simple. Isn't it? In starting few lines, we're installing mysql server and granting user root all privileges.
 
-	Line 24, however, need little elboration. Data directory will enable direct access to configuration and data files. This I'll answer in my part-III. For now,  lets put parts rolling.
+Line 24, however, need little elboration. Data directory will enable direct access to configuration and data files. This I'll answer in my part-III. For now,  lets put parts rolling.
 
-	Let's setup and run mysql
+Let's setup and run mysql
 
-	{% highlight bash %}
-		#Pull and Run mysql image
-		sudo docker run -d --name mysql -p 3306:3306 dockerfile/mysql
+{% highlight bash %}
+#Pull and Run mysql image
+sudo docker run -d --name mysql -p 3306:3306 dockerfile/mysql
+{% endhighlight %}
+
+
+This one line is suffice to run mysql server up and running.
+To verify , we'll start mysql client using the same image but different command.
+
+
+{% highlight bash %}
+	sudo docker run -it --rm --link mysql:mysql dockerfile/mysql bash -c 'mysql -h $MYSQL_PORT_3306_TCP_ADDR'
+{% endhighlight %}
+
+
+2. Containerize RoR Apps
+-------------------------
+
+ 	RoR framework already comes sensible default best practices of Software Development.
+ 	However, there are few configuration that i'd like to point out:
+
+ 	- Session Storage
+
+ 		Store session information in database. This will enable our app to behave more like stateless app. Also, this is essential if we want to scale our infrastructure further 
+
+ 	- Secrets
+
+ 		Database configuration, RoR Secret key (SECRET_KEY_BASE) , environment , smtp credentials, or other 3rd party addons secret that your app might be using, should not be hardcoded in configuration file. Instead, they should be picked from environment.
+
+
+ 	Here's one example showing database credentials being picked from environment.
+	
+	`config/database.yml`
+ 	{% highlight yaml %}
+	production:
+	  <<: *default
+	  database: <%= ENV['DATABASE_PROD'] %>
+	  username: <%= ENV['DATABASE_USERNAME'] %>
+	  password: <%= ENV['DATABASE_PASSWORD'] %>
+ 	{% endhighlight %}
+
+ 	Similary, we'll specify SMTP or 3rd party credentails(mailgun, aws secrets etc) credentials through environment variables.
+
+ 	While setting database credentials in environment, there's a shorthand provided by RoR:
+
+ 		> DATABASE_URL="mysql2://myuser:mypass@localhost/somedatabase"
+
+ 	Setting `DATABASE_URL` environment variable will take precendence of config file params, & merge with config files to populate db connection setting. 
+
+ 	### Web Server for RoR: Unicorn
+
+ 		We'll choose widely adopted Unicorn as our web server.
+
+ 		`unicorn.rb` :
+ 		{% highlight ruby linenos %}
+			# Set the working application directory
+			# working_directory "/path/to/your/app"
+			working_directory "/opt/dailyReport"
+
+			# Unicorn PID file location
+			pid "/tmp/myApp/unicorn.pid"
+
+			# Path to logs
+			stderr_path "/var/log/myApp/unicorn.log"
+			stdout_path "/var/log/myApp/unicorn.log"
+
+			# Unicorn socket
+			listen "/tmp/unicorn.dailyReport.sock"
+
+			# Number of processes
+			worker_processes 2
+
+			# Time-out
+			timeout 30
+ 		{% highlight bash %}
+
+NOTE: path will make sense ahead. So, just skim, don't mull over them.
+
+#### How will we start our app?
+
+{% highlight bash %}
+	cd to/app/directory
+	pkill unicorn_rails
+	# clear any tmp file
+	rm -rf tmp/*
+	# Spank up unicorn ;)
+	unicorn_rails -c /etc/myApp/unicorn.rb -E production -D
+{% endhighlight %}
+
+let's wrap these lines inside `run.sh` file which will serve as our app startup script.
+
+We wrote `run.sh`,and `unicorn.rb` file. Replaced hardcoded database, SMTP and 3rd party credentials with environment variables.
+Having created unicorn config file, we now need to wrap our app and unicorn in a container.
+
+
+Let's create our base Dockerfile. It'll contain:
+
+- ruby 2.1.2
+
+	ruby 1.9.x EOL is near. The newer 2.1.x version is comparatively fast, and bug free.
+	We'll use rbenv for install ruby. It'll also help us to update ruby version without re-building docker image. 
+	{% highlight %}
+	# Start the containre
+	docker run -it myDockerfiles/rubyBaseImg
+		rbenv local x.x.x
+		rbenv global x.x.x
+		rbenv rehash
+		echo rbenv -v
+		exit
+	docker commit -m "ruby updated to x.x.x"   myDockerfiles/rubyBaseImg_x.x.x
 	{% endhighlight %}
+
+
+`myDockerfiles/base/Dockerfile`
+
+{% highlight bash linenos %}
+	#
+	# Ruby with rbenv Dockerfile
+	#
+	
+	# Pull base image.
+	FROM dockerfile/ubuntu	
+
+	# Install some dependencies
+	RUN apt-get update
+	RUN apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties
+	
+	# Install rbenv for install ruby
+	RUN git clone git://github.com/sstephenson/rbenv.git .rbenv
+	RUN echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+	RUNecho 'eval "$(rbenv init -)"' >> ~/.bashrc
+	exec $SHELL
+
+	# Install rbenv plugin: ruby-build
+	RUN git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+	RUN echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
+	RUN exec $SHELL
+
+	# Install ruby
+	RUN rbenv install 2.1.2
+	RUN rbenv global 2.1.2
+
+	# Let's not copy gem package documentation
+	RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc
+
+	## Install Rails
+	RUN apt-get install software-properties-common
+	RUN add-apt-repository ppa:chris-lea/node.js
+	RUN apt-get update
+	RUN apt-get install nodejs
+
+	## Finally, install Rails
+	RUN gem install rails
+	RUN rbenv rehash
+
+	CMD /bin/bash
+
+{% endhighlight %}
+
+Let's build and tag it
+
+{%  highlight bash %}
+	docker build -t "myDockerfiles/baseRubyImg"
+	# Run and test
+	docker run -it --rm  myDockerfiles/baseRubyImg /bin/bash -c 'ruby -v'
+{% endhighlight %}
+
+
+Finally, let's containerize our ror app.
+
+{% highlight bash linenos %}
+
+{% endhighlight %}
 
