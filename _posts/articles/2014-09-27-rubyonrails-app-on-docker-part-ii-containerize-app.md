@@ -169,7 +169,6 @@ timeout 30
 NOTE: path will make sense ahead. So, just skim, don't mull over them.
 
 
-
 #### How will we start our app?
 
 {% highlight bash %}
@@ -193,7 +192,8 @@ Let's create our base Dockerfile. It'll contain:
 
 	ruby 1.9.x EOL is near. The newer 2.1.x version is comparatively fast, and bug free.
 	We'll use rbenv for install ruby. It'll also help us to update ruby version without re-building docker image. 
-	{% highlight %}
+
+	{% highlight bash %}
 	# Start the containre
 	docker run -it myDockerfiles/rubyBaseImg
 		rbenv local x.x.x
@@ -263,5 +263,5 @@ Let's build and tag it
 Finally, let's containerize our ror app.
 
 {% highlight bash linenos %}
-
+# start
 {% endhighlight %}
