@@ -105,22 +105,22 @@ To verify , we'll start mysql client using the same image but different command.
 2. Containerize RoR Apps
 -------------------------
 
- 	RoR framework already comes sensible default best practices of Software Development.
- 	However, there are few configuration that i'd like to point out:
+RoR framework already comes sensible default best practices of Software Development.
+However, there are few configuration that i'd like to point out:
 
- 	- Session Storage
+- Session Storage
 
- 		Store session information in database. This will enable our app to behave more like stateless app. Also, this is essential if we want to scale our infrastructure further 
+	Store session information in database. This will enable our app to behave more like stateless app. Also, this is essential if we want to scale our infrastructure further 
 
- 	- Secrets
+- Secrets
 
- 		Database configuration, RoR Secret key (SECRET_KEY_BASE) , environment , smtp credentials, or other 3rd party addons secret that your app might be using, should not be hardcoded in configuration file. Instead, they should be picked from environment.
+	Database configuration, RoR Secret key (SECRET_KEY_BASE) , environment , smtp credentials, or other 3rd party addons secret that your app might be using, should not be hardcoded in configuration file. Instead, they should be picked from environment.
 
 
- 	Here's one example showing database credentials being picked from environment.
-	
+Here's one example showing database credentials being picked from environment.
+
 	`config/database.yml`
-	
+
  	{% highlight yaml %}
 	production:
 	  <<: *default
