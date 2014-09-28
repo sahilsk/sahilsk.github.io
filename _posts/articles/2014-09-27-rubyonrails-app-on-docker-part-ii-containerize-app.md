@@ -130,3 +130,40 @@ Here's one example showing database credentials being picked from environment.
  	{% endhighlight %}
 
 
+
+Similary, we'll specify SMTP or 3rd party credentails(mailgun, aws secrets etc) credentials through environment variables.
+
+While setting database credentials in environment, there's a shorthand provided by RoR:
+
+> DATABASE_URL="mysql2://myuser:mypass@localhost/somedatabase"
+
+Setting `DATABASE_URL` environment variable will take precendence of config file params, & merge with config files to populate db connection setting. 
+
+### Web Server for RoR: Unicorn
+
+We'll choose widely adopted Unicorn as our web server.
+
+`unicorn.rb` :
+{% highlight ruby linenos %}
+# Set the working application directory
+# working_directory "/path/to/your/app"
+working_directory "/opt/dailyReport"
+
+# Unicorn PID file location
+pid "/tmp/myApp/unicorn.pid"
+
+# Path to logs
+stderr_path "/var/log/myApp/unicorn.log"
+stdout_path "/var/log/myApp/unicorn.log"
+
+# Unicorn socket
+listen "/tmp/unicorn.dailyReport.sock"
+
+# Number of processes
+worker_processes 2
+
+# Time-out
+timeout 30
+{% highlight bash %}
+
+NOTE: path will make sense ahead. So, just skim, don't mull over them.
