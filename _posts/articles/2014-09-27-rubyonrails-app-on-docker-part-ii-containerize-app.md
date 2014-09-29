@@ -1,22 +1,27 @@
 ---
 layout: post
 title: "RubyOnRails App on Docker: Part-II Containerizing App"
-modified:
+modified: null
 categories: articles
-excerpt:
-tags: ['RoR', 'Docker', 'Deploy', '12factor.net']
+excerpt: null
+tags: 
+  - RoR
+  - Docker
+  - Deploy
+  - 12factor.net
 comments: true
 share: true
-image:
-  feature:
-date: 2014-09-27T16:27:46+05:30
+image: 
+  feature: null
+date: {}
+published: true
 ---
 
 RubyOnRails App On Docker: Part-II How are we doing?
 ===============
 
 Index
-
+ 
 - Setup and Install database
 - Containerize RoR Apps
 - Setup Reverse Proxy using Nginx
