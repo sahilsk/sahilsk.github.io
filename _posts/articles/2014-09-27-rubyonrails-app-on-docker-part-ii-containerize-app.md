@@ -13,7 +13,7 @@ comments: true
 share: true
 image: 
   feature: null
-date: {}
+date: 2014-09-27T15:12:48+05:30
 published: true
 ---
 
@@ -86,134 +86,164 @@ Index
 	EXPOSE 3306
 	{% endhighlight %}
 
-Dockerfile is quite simple. Isn't it? In starting few lines, we're installing mysql server and granting user root all privileges.
+	Dockerfile is quite simple. Isn't it? In starting few lines, we're installing mysql server and granting user root all privileges.
 
-Line 24, however, need little elboration. Data directory will enable direct access to configuration and data files. This I'll answer in my part-III. For now,  lets put parts rolling.
+	Line 24, however, need little elboration. Data directory will enable direct access to configuration and data files. This I'll answer in my part-III. For now,  lets put parts rolling.
 
-Let's setup and run mysql
+	Let's setup and run mysql
 
-{% highlight bash %}
-#Pull and Run mysql image
-sudo docker run -d --name mysql -p 3306:3306 dockerfile/mysql
-{% endhighlight %}
-
-
-This one line is suffice to run mysql server up and running.
-To verify , we'll start mysql client using the same image but different command.
+	{% highlight bash %}
+	#Pull and Run mysql image
+	sudo docker run -d --name mysql -p 3306:3306 dockerfile/mysql
+	{% endhighlight %}
 
 
-{% highlight bash %}
-	sudo docker run -it --rm --link mysql:mysql dockerfile/mysql bash -c 'mysql -h $MYSQL_PORT_3306_TCP_ADDR'
-{% endhighlight %}
+	This one line is suffice to run mysql server up and running.
+	To verify , we'll start mysql client using the same image but different command.
+
+
+	{% highlight bash %}
+		sudo docker run -it --rm --link mysql:mysql dockerfile/mysql bash -c 'mysql -h $MYSQL_PORT_3306_TCP_ADDR'
+	{% endhighlight %}
 
 
 2. Containerize RoR Apps
 -------------------------
 
-RoR framework already comes sensible default best practices of Software Development.
-However, there are few configuration that i'd like to point out:
+	RoR framework already comes with sensible default best practices of Software Development.
+	However, there are few configuration that i'd like to stress on:
 
-- Session Storage
+	- Session Storage
 
-	Store session information in database. This will enable our app to behave more like stateless app. Also, this is essential if we want to scale our infrastructure further 
+		Store session information in database. This will enable our app to behave more like stateless app. Also, this is essential if we want to scale our infrastructure further 
 
-- Secrets
+	- Secrets
 
-	Database configuration, RoR Secret key (SECRET_KEY_BASE) , environment , smtp credentials, or other 3rd party addons secret that your app might be using, should not be hardcoded in configuration file. Instead, they should be picked from environment.
+		Database configuration, RoR Secret key (SECRET_KEY_BASE) , environment , smtp credentials, or other 3rd party addons secret that your app might be using, should not be hardcoded in configuration file. Instead, they should be picked from environment.
 
 
 Here's one example showing database credentials being picked from environment.
 
-	`config/database.yml`
+__config/database.yml__
 
- 	{% highlight yaml %}
-	production:
-	  <<: *default
-	  database: <%= ENV['DATABASE_PROD'] %>
-	  username: <%= ENV['DATABASE_USERNAME'] %>
-	  password: <%= ENV['DATABASE_PASSWORD'] %>
- 	{% endhighlight %}
+	{% highlight yaml %}
+production:
+  <<: *default
+  database: <%= ENV['DATABASE_PROD'] %>
+  username: <%= ENV['DATABASE_USERNAME'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
+	{% endhighlight %}
 
 
 
-Similary, we'll specify SMTP or 3rd party credentails(mailgun, aws secrets etc) credentials through environment variables.
+Similary, we'll specify SMTP parameters. If you're using any 3rd party service, like (mailgun, aws secrets etc), credentails should not be hardcoded, rather should be set in environment for the process to pick while running.
 
-While setting database credentials in environment, there's a shorthand provided by RoR:
+For setting up database credentials in environment, there's a shorthand provided by RoR:
 
-> DATABASE_URL="mysql2://myuser:mypass@localhost/somedatabase"
+	 DATABASE_URL="mysql2://myuser:mypass@localhost/somedatabase"
 
-Setting `DATABASE_URL` environment variable will take precendence of config file params, & merge with config files to populate db connection setting. 
+NOTE: Setting `DATABASE_URL` environment variable will take precendence over config file params, & merge with config files to populate db connection setting. 
 
 ### Web Server for RoR: Unicorn
 
 We'll choose widely adopted Unicorn as our web server.
 
-`unicorn.rb` :
+**unicorn.rb**
 {% highlight ruby linenos %}
 # Set the working application directory
 # working_directory "/path/to/your/app"
-working_directory "/opt/myApp"
-
+working_directory "/opt/dailyReport"
+ 
 # Unicorn PID file location
-pid "/tmp/myApp/unicorn.pid"
-
+pid "/var/run/unicorn.pid"
+ 
 # Path to logs
-stderr_path "/var/log/myApp/unicorn.log"
-stdout_path "/var/log/myApp/unicorn.log"
-
+stderr_path "/var/log/dailyReport/unicorn.err.log"
+stdout_path "/var/log/dailyReport/unicorn.log"
+ 
 # Unicorn socket
-listen "/tmp/unicorn.myApp.sock"
-
+listen "/tmp/unicorn.dailyReport.sock"
+ 
 # Number of processes
+## Rule of thum: 2x per core
 worker_processes 2
-
+ 
 # Time-out
 timeout 30
 {% endhighlight  %}
 
-NOTE: path will make sense ahead. So, just skim, don't mull over them.
-
 
 #### How will we start our app?
 
+Here comes run.sh into picture. We've written our startup script in this file.
+
+**run.sh**
 {% highlight bash %}
-	cd to/app/directory
-	pkill unicorn_rails
-	# clear any tmp file
-	rm -rf tmp/*
-	# Spank up unicorn ;)
-	unicorn_rails -c /etc/myApp/unicorn.rb -E production -D
+RAILS_ENV=$RAILS_ENV
+: ${RAILS_ENV:="development"}
+export RAILS_ENV
+
+SECRET_KEY_BASE=$SECRET_KEY_BASE
+: ${SECRET_KEY_BASE:="f38c575fcf0a2b0e7c7f002a873d54d78104581ebe069bf2b1afad04014d1e10245b259b872b0e12189ef2ce3fca4c73a9b5103aaf4aad1f4"}
+export SECRET_KEY_BASE=$SECRET_KEY_BASE
+
+## Setting DB
+DB_NAME="dailyReport_${RAILS_ENV}"
+#DATABASE_URL="mysql2://root:root@localhost/${DB_NAME}"
+
+# Trap sigkill and sigterm: otherwise dockr stop/start will complain for stale unicorn pid
+trap "pkill unicorn_rails ; exit " SIGINT SIGTERM SIGKILL
+
+echo "Stopping  unicorn_rails, if already running"
+pkill unicorn_rails
+
+echo "cleaning tmp files"
+rm -rf tmp/*
+
+echo "Restart Reverse Proxy"
+service nginx restart
+
+echo "Running unicorn"
+bundle exec unicorn_rails -c /etc/dailyReport/unicorn.rb -E $RAILS_ENV -d
+
 {% endhighlight %}
 
 let's wrap these lines inside `run.sh` file which will serve as our app startup script.
 
-We wrote `run.sh`,and `unicorn.rb` file. Replaced hardcoded database, SMTP and 3rd party credentials with environment variables.
-Having created unicorn config file, we now need to wrap our app and unicorn in a container.
+We wrote `run.sh`,and `unicorn.rb` file. We've also replaced hardcoded database, SMTP and 3rd party credentials with environment variables.
+Now now need to wrap our app and unicorn in a container.
 
 
-Let's create our base Dockerfile. It'll contain:
+For this we'll create two dockerfiles
 
-- ruby 2.1.2
+- Base Dockerfile 
 
-	ruby 1.9.x EOL is near. The newer 2.1.x version is comparatively fast, and bug free.
-	We'll use rbenv for install ruby. It'll also help us to update ruby version without re-building docker image. 
+	It'll contain latest version of ruby and rails installed.
+	Sjince ruby 1.9.x EOL is near. The newer 2.1.x version is comparatively fast, and bug free.
+	So, we'll use ruby 2.1.2. We'll use rbenv to install. It'll also help us to update ruby version without re-building docker image again. __how?__
+
+
 
 {% highlight bash %}
-# Start the container
-docker run -it myDockerfiles/rubyBaseImg
-	rbenv local x.x.x
-	rbenv global x.x.x
-	rbenv rehash
-	echo rbenv -v
-	exit
-# Commit container 
-docker commit -m "ruby updated to x.x.x"   myDockerfiles/rubyBaseImg_x.x.x Container_ID
-{% endhighlight %}
+# Note down its container id
+docker run -it baseDockerImage /bin/bash
+	$ rbenv install ruby 2.1.3
+	$ exit
+
+docker commit -m "ruby2.1.3" CONTAINER_ID  
+
+{% endhighlight bash %}		
+
+- Main Dockerfile
+	
+	This will be our Dockerfile for our application. It'll include 'unicorn.rb', 'run.rb' and 'reverse proxy' configuration
 
 
-`myDockerfiles/base/Dockerfile`
+------
 
-{% highlight bash linenos %}
+**myDockerfiles/base_ruby**
+
+{% highlight bash %}
 #
 # Ruby with rbenv Dockerfile
 #
@@ -223,85 +253,154 @@ FROM dockerfile/ubuntu
 
 # Install some dependencies
 RUN apt-get update
-RUN apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties
+RUN apt-get install -y git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties
 
-# Install rbenv for install ruby
-RUN git clone git://github.com/sstephenson/rbenv.git .rbenv
-RUN echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-RUNecho 'eval "$(rbenv init -)"' >> ~/.bashrc
-exec $SHELL
+# Install rbenv to install ruby
+RUN git clone git://github.com/sstephenson/rbenv.git /usr/local/rbenv
+RUN echo '# rbenv setup' > /etc/profile.d/rbenv.sh
+RUN echo 'export RBENV_ROOT=/usr/local/rbenv' >> /etc/profile.d/rbenv.sh
+RUN echo 'export PATH="$RBENV_ROOT/bin:$PATH"' >> /etc/profile.d/rbenv.sh
+RUN echo 'eval "$(rbenv init -)"' >> /etc/profile.d/rbenv.sh
+RUN chmod +x /etc/profile.d/rbenv.sh
 
 # Install rbenv plugin: ruby-build
-RUN git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
-RUN echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
-RUN exec $SHELL
-
-# Install ruby
-RUN rbenv install 2.1.2
-RUN rbenv global 2.1.2
+RUN mkdir /usr/local/rbenv/plugins
+RUN git clone https://github.com/sstephenson/ruby-build.git /usr/local/rbenv/plugins/ruby-build
 
 # Let's not copy gem package documentation
 RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc
 
+ENV RBENV_ROOT /usr/local/rbenv
+ENV PATH $RBENV_ROOT/bin:$RBENV_ROOT/shims:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Install ruby
+RUN rbenv install 2.1.2
+RUN rbenv local 2.1.2
+RUN rbenv global 2.1.2
+
+
+
 ## Install Rails
-RUN apt-get install software-properties-common
+RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:chris-lea/node.js
 RUN apt-get update
-RUN apt-get install nodejs
+RUN apt-get install -y nodejs
 
 ## Finally, install Rails
 RUN gem install rails
 RUN rbenv rehash
 
 CMD /bin/bash
-
 {% endhighlight %}
 
-Let's build and tag it
+
+	Let's build and tag it
 
 {%  highlight bash %}
-docker build -t "myDockerfiles/baseRubyImg" .
+docker build -t "myDockerfiles/base_ruby" .
 # Run and test
 docker run -it --rm  myDockerfiles/baseRubyImg /bin/bash -c 'ruby -v'
 {% endhighlight %}
+	
+Here goes our main app Dockerfile that we will use 
 
 
-Finally, let's containerize our ror app.
-
+**myDockerfiles/main**
 {% highlight bash linenos %}
 #
-# myApp in Container
+# dailyReport in Container
 #
-
+ 
 # Pull base image.
-FROM  myDockerfiles/baseRubyImg
+FROM  myDockerfiles/base_ruby
+ 
+
+# Fill dependencies for mysql2 gem
+RUN apt-get install -y libmysqlclient-dev libmysqlclient18 ruby-dev
+ 
+# Install Nginx.
+RUN \
+  add-apt-repository -y ppa:nginx/stable && \
+  apt-get update && \
+  apt-get install -y nginx && \
+  rm -rf /var/lib/apt/lists/* && \
+  chown -R www-data:www-data /var/lib/nginx
 
 # Pull repository from private github repos
-
+ 
 ### Create .ssh dir in home directory
 RUN mkdir -p /root/.ssh
-ADD url_for_id_rsa /root/.ssh/id_rsa
+# Add your private key here. (Create a separate key, so that you can revoke it later)
+ADD ./id_rsa /root/.ssh/id_rsa
 RUN chmod 700 /root/.ssh/id_rsa
 RUN echo "Host github.com\n\tStrictHostKeyChecking no\n" >> /root/.ssh/config
+ 
+
+# Setup Reverse Proxy : Add reverse proxy config here
+ADD ./dailyReport_nginx.conf /etc/nginx/sites-enabled/default
+RUN service nginx reload && service nginx restart
+
+ 
+WORKDIR /opt/dailyReport
 
 # Pull project : Replace with your github handle and repository
-RUN git clone git@github.com:myHandle/myApp.git /opt/myApp
-
-RUN cd /opt/myApp
-RUN gem install bundler && gem install unicorn
+RUN git clone git@github.com:sahilsk/dailyReport.git .
+ 
+# Install gem
+RUN gem install bundler
 RUN bundle install
+RUN rbenv rehash
 
-Add ./unicorn.rb /etc/myApp/unicorn.rb
-Add ./run.sh /etc/myApp/run.sh
+# Pre-compile app production assets
+RUN RAILS_ENV=production bundle exec rake assets:precompile
+ 
+# Add unicorn config here 
+ADD ./unicorn.rb /etc/dailyReport/unicorn.rb
+
+# Run script
+ADD ./run.sh /etc/dailyReport/run.sh
 
 
 # Define mountable directories.
-VOLUME ["/etc/myApp", "/var/log/myApp"]
+VOLUME ["/etc/dailyReport", "/var/log/dailyReport", "/etc/nginx/sites-enabled", "/etc/nginx/certs", "/etc/nginx/conf.d", "/var/log/nginx"] 
+
+# Expost port 80
+EXPOSE 80
+
+# Set environment variables
+ENV RAILS_ENV development
+
 #
-WORKDIR /opt/myApp
-
-CMD /bin/bash /etc/myApp/run.sh
-
+CMD /bin/bash /etc/dailyReport/run.sh
 {% endhighlight %}
 
-Configuration file(unicorn.rb) and start file (run.sh) are kept in host /etc/myApp folder.
+
+Let's build out main app now.
+
+
+	$  docker build -t myDockerfiles/dailyreport .
+
+It all goes well, you now have two images built succesfully.
+
+
+
+Having build two images, you can see them using docker commands
+
+	$ docker images
+
+
+Now lets run our app container
+
+	$docker run -d -p 49172:80  -v /var/run/mysqld:/var/run/mysqld:ro  --restart="always" -e "RAILS_ENV=production"  myDockerfiles/dailyreport
+
+You can visit localhost:49172 and confirm if your app is launched 
+
+You can run more than one instance. Simple change the port and execute.
+	
+	$docker run -d -p 49173:80  -v /var/run/mysqld:/var/run/mysqld:ro  --restart="always" -e "RAILS_ENV=production"  myDockerfiles/dailyreport
+
+
+References:
+==========
+
+- Dockerfile and scripts used here are on [github](https://github.com/sahilsk/RoR-Dockerized)
