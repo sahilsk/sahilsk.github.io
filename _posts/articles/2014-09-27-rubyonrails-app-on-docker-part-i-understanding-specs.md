@@ -65,7 +65,7 @@ Lets give them a short visit here:
 
 - `HIGH AVAILABILITY`
 
-    With the advancement in technology, Zero Downtime deployment is no longer a dream. If your infrastructure is not yet support zzero downtime deployment, then indeed you're living in Rock age. 12 factors app also enable you to have zero  downtime of your production infrastructure. 
+    With the advancement in technology, Zero Downtime deployment is no longer a dream. If your infrastructure does not yet support zero downtime deployment, then indeed you're living in rock age. 12 factors app also enable you to avail zero downtime deployment.
     
     
 #### Finally, some sys-admin chores:
