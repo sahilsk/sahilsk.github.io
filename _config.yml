@@ -5,8 +5,8 @@ locale: en_US
 description: ...awesome chores of an engineer
 #logo: site-logo.png
 search: true
-#url: http://localhost:4000
-url: http://sahilsk.github.io
+url: http://localhost:4000
+#url: http://sahilsk.github.io
 
 
 # Jekyll configuration

@@ -67,6 +67,38 @@ At this point i assume you have containerized RoR app up and running. You can st
 
 		Also, this enable you zero downtime deployment of your upgrades.
 
+### Why do we need a loadbalancer?
+
+__Loadbalancer__ :  Loadbalancers are one or more servers that forward the traffic to our backend application servers.  
+Loadbalancer is required to distributed load among servers. Load distribution is required if there is huge traffic hitting your service and your single server is not able to withstand it.  
+If you're running some resource (cpu, ram etc) intensive jobs, like image processing or rendering then also you need a way to distribute load to other idle or lightly utilized servers.  
+
+Loadbalancer is not only used to distribute load only but also to ease deployment with minimal downtime. Just take one server out of pool of servers and do your maintenace or upgradation there. When you are done, put it back online. After your canary testing you can perform the same for other servers as well
+
+So, here in RoR application we're assuming our application to go incredibly famous.Thereby, bringing thousands hits per second. So, to accomodate these many request we'll put loadbalancers.
+
+
+{% highlight bash%}
+
+...                  +-------+                                           
+                     |       |                                           
+                     |  L    |        +-+---------+---+                  
+                     |  O    |        | +---------+   |                  
+T T T   +------>     |  A    |        | | myApp|01|   |                  
+R R R                |  D    |        | +------+--+   |                  
+A A A   <------+     |  B    +-------->               |        +--------+
+F F F                |  A    |        |   +------+--+ |        |        |
+F F F   +------>     |  L    <--------+   | myApp|02| | +--->  |DATABASE|
+I I I                |  A    |        |   +------+--+ | <---+  |        |
+C C C   <-------     |  N    |        |               |        +--------+
+                     |  C    |        | +------+--+   |                  
+                     |  E    |        | | myApp|N |   |                  
+                     |  R    |        | +---------+   |                  
+                     |       |        +-+---------+---+                  
+                     +-------+                                           
+
+{% endhighlight %}
+
 **loadbalancer**  
 {% highlight javascript %}
 # Set your server  
@@ -125,7 +157,7 @@ __volume__ help us create mountable directories inside containers. They are [doc
 Lets have one container that does the job of shipping logs. Separtion of concerns, by having one container that does one job and does it perfectly.  
 We'll create new container called `data container` which will inherits volumes from our app container
 
-	$sudo docker run -d --volumes-from logsdata --name shiplogs myDockerfile/dailyreport
+	$sudo docker run -d --volumes-from app-001.example.com --name shiplogs.example.com myDockerfile/shiplogs
 
 Inside this container `/var/log/dailyReport` is accessible where app container is squirting log. In our `shiplogs` container we can have a process that ships logs from there to centralized repository. (What that process could be, is left for future post. )  
 
@@ -135,10 +167,18 @@ Another mount directory is `/etc/dailyReport` . This one is created to store all
 Why? If you want to edit run.sh, or unicorn.rb or reverse proxy configuration then you can do this without actually re-building image.  
 
 {% highlight javascript %}
-	$docker run -it --rm  -v /var/log/dailyReport:/var/log/dailyReport -v /etc/dailyReport:/etc/dailyReport  -v /var/run/mysqld:/var/run/mysqld:ro -p 49173:80 --restart="always" -e "RAILS_ENV=production"  myDockerfiles/dailyreport /bin/bash
+	$docker run -it --rm  -v /var/log/dailyReport:/var/log/dailyReport -v /etc/dailyReport:/etc/dailyReport  -v /var/run/mysqld:/var/run/mysqld:ro -p 49173:80 --restart="always" -e "RAILS_ENV=production" --name app-001.example.com myDockerfiles/dailyreport /bin/bash
 {% endhighlight %}
 
-Here i've mounted `/var/log/dailyReport` and `/etc/dailyReport` directory of host onto container. This will make the container to use my configuration files stored at `/etc/dailyReport`. Also, i can see the logs created on host directory for debugging purpose.  
+Here i've mounted `/var/log/dailyReport` and `/etc/dailyReport` directory of host onto container. This will make the container to use my configuration files stored at `/etc/dailyReport`. Also, i can see the logs created on host directory for debugging purpose.
+
+## Conclusion
+
+To recap everything,  we've containerized RoR application and we're running one or more instance of it behind loadbalancer. I've also tried my best to answer scale, availability and fault tolerance problem related to each component. So, with this i close my article.  
+Comments are most welcome. If you've have any query or have better suggestion, you can write down in comments.  
+
+Later on, i'll pen down centralized logging solution with ELK stack and my experience while working on it.
+So, stay tuned. ;)
  
 
 
