@@ -5,10 +5,11 @@ modified:
 categories: articles
 excerpt:
 tags: ['RoR', 'Docker', 'Deploy', '12factor.net']
-comments: true
+comments: true 
 share: true
 image:
   feature:
+author: sahilsk
 date: 2014-09-27T15:12:48+05:30
 ---
 
