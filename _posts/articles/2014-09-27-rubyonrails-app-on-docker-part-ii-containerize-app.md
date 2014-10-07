@@ -13,12 +13,20 @@ comments: true
 share: true
 image: 
   feature: null
-date: 2014-09-27T15:12:48+05:30
+date: 2014-10-1T15:12:48+05:30
 published: true
 ---
 
 RubyOnRails App On Docker: Part-II How are we doing?
 ===============
+
+Assumption:
+
+You're free to name your application and docker namespace anything you want. However, to make this article more readable, i'm using undersigned names.
+
+	application name: `dailyReport`
+	docker user namespace:  `myDockerfiles`
+
 
 Index
  
@@ -49,62 +57,84 @@ Index
 	Luckily, there is already mysql Dockerfile ready in the docker hub: [MySQL Dockerfile](https://github.com/dockerfile/mysql) 
 
 
-	dockerfile/mysql 
-	{% highlight bash linenos %}
-	#
-	# MySQL Dockerfile
-	#
-	# https://github.com/dockerfile/mysql
-	#
+**dockerfile/mysql**
+{% highlight bash linenos %}
+#
+# MySQL Dockerfile
+#
+# https://github.com/dockerfile/mysql
+#
 
-	# Pull base image.
-	FROM dockerfile/ubuntu
+# Pull base image.
+FROM dockerfile/ubuntu
 
-	# Install MySQL.
-	RUN \
-	  apt-get update && \
-	  DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server && \
-	  rm -rf /var/lib/apt/lists/* && \
-	  sed -i 's/^\(bind-address\s.*\)/# \1/' /etc/mysql/my.cnf && \
-	  sed -i 's/^\(log_error\s.*\)/# \1/' /etc/mysql/my.cnf && \
-	  echo "mysqld_safe &" > /tmp/config && \
-	  echo "mysqladmin --silent --wait=30 ping || exit 1" >> /tmp/config && \
-	  echo "mysql -e 'GRANT ALL PRIVILEGES ON *.* TO \"root\"@\"%\" WITH GRANT OPTION;'" >> /tmp/config && \
-	  bash /tmp/config && \
-	  rm -f /tmp/config
+# Install MySQL.
+RUN \
+  apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server && \
+  rm -rf /var/lib/apt/lists/* && \
+  sed -i 's/^\(bind-address\s.*\)/# \1/' /etc/mysql/my.cnf && \
+  sed -i 's/^\(log_error\s.*\)/# \1/' /etc/mysql/my.cnf && \
+  echo "mysqld_safe &" > /tmp/config && \
+  echo "mysqladmin --silent --wait=30 ping || exit 1" >> /tmp/config && \
+  echo "mysql -e 'GRANT ALL PRIVILEGES ON *.* TO \"root\"@\"%\" WITH GRANT OPTION;'" >> /tmp/config && \
+  bash /tmp/config && \
+  rm -f /tmp/config
 
-	# Define mountable directories.
-	VOLUME ["/etc/mysql", "/var/lib/mysql"]
+# Define mountable directories.
+VOLUME ["/etc/mysql", "/var/lib/mysql"]
 
-	# Define working directory.
-	WORKDIR /data
+# Define working directory.
+WORKDIR /data
 
-	# Define default command.
-	CMD ["mysqld_safe"]
+# Define default command.
+CMD ["mysqld_safe"]
 
-	# Expose ports.
-	EXPOSE 3306
-	{% endhighlight %}
-
-	Dockerfile is quite simple. Isn't it? In starting few lines, we're installing mysql server and granting user root all privileges.
-
-	Line 24, however, need little elboration. Data directory will enable direct access to configuration and data files. This I'll answer in my part-III. For now,  lets put parts rolling.
-
-	Let's setup and run mysql
-
-	{% highlight bash %}
-	#Pull and Run mysql image
-	sudo docker run -d --name mysql -p 3306:3306 dockerfile/mysql
-	{% endhighlight %}
+# Expose ports.
+EXPOSE 3306
+{% endhighlight %}
 
 
-	This one line is suffice to run mysql server up and running.
-	To verify , we'll start mysql client using the same image but different command.
+Dockerfile is quite simple. Isn't it? In starting few lines, we're installing mysql server and granting user root all privileges.
+
+Line 24, however, need little elboration. Data directory will enable direct access to configuration and data files. This I'll answer in my part-III. For now,  lets put parts rolling.
+
+Let's setup and run mysql
+
+{% highlight bash %}
+#Pull and Run mysql image
+sudo docker run -d --name mysql -p 3306:3306 dockerfile/mysql
+{% endhighlight %}
 
 
-	{% highlight bash %}
-		sudo docker run -it --rm --link mysql:mysql dockerfile/mysql bash -c 'mysql -h $MYSQL_PORT_3306_TCP_ADDR'
-	{% endhighlight %}
+This one line is suffice to run mysql server up and running.
+To verify , we'll start mysql client using the same image but different command.
+
+
+{% highlight bash %}
+	sudo docker run -it --rm --link mysql:mysql dockerfile/mysql bash -c 'mysql -h $MYSQL_PORT_3306_TCP_ADDR'
+{% endhighlight %}
+
+### How to connect our application with database?
+
+There are actually two way to specify mysql connection to our app.
+
+
+- mouting default mysql unix sock
+
+	This is useful if you don't want to run mysql publicly. And for this tutorial, i've done the same.
+	I had database installed on my server. So, I'll mount `/var/run/mysqld` on my container, thereby enabling rails to find default mysql endpoint to connect with.
+
+		docker run -d   -p 49172:80  -v /var/run/mysqld:/var/run/mysqld:ro  --restart="always" -e "RAILS_ENV=production"  myDockerfiles/dailyreport
+
+- Specify connection string
+
+	If you want to use database running somewhere accessible through IP/Port, then you can specify these connection string in an environment variable `DATABASE_URL`
+
+		docker run -d   -p 49172:80  --restart="always" -e "RAILS_ENV=production"  -e "DATABASE_URL='mysql2://username:password@IP/DB_NAME"  myDockerfiles/dailyreport
+
+
+
 
 
 2. Containerize RoR Apps
@@ -122,17 +152,16 @@ Index
 		Database configuration, RoR Secret key (SECRET_KEY_BASE) , environment , smtp credentials, or other 3rd party addons secret that your app might be using, should not be hardcoded in configuration file. Instead, they should be picked from environment.
 
 
-Here's one example showing database credentials being picked from environment.
+	Here's one example showing database credentials being picked from environment.
 
 __config/database.yml__
-
-	{% highlight yaml %}
+{% highlight yaml %}
 production:
   <<: *default
   database: <%= ENV['DATABASE_PROD'] %>
   username: <%= ENV['DATABASE_USERNAME'] %>
   password: <%= ENV['DATABASE_PASSWORD'] %>
-	{% endhighlight %}
+{% endhighlight %}
 
 
 
@@ -144,7 +173,7 @@ For setting up database credentials in environment, there's a shorthand provided
 
 NOTE: Setting `DATABASE_URL` environment variable will take precendence over config file params, & merge with config files to populate db connection setting. 
 
-### Web Server for RoR: Unicorn
+### App Server for RoR: Unicorn
 
 We'll choose widely adopted Unicorn as our web server.
 
@@ -171,6 +200,50 @@ worker_processes 2
 # Time-out
 timeout 30
 {% endhighlight  %}
+
+
+### Web Server for RoR: Nginx
+
+As the rail guides says, best practice to  serve assets is through nginx. Here nginx will also serve as reverse proxy by masking unix socket and giving illusion of app running at http port.
+
+To make assets serving faster, we'll gzip our styelsheets and javascripts. How? This is not in the scope of this article, however in rails simple `rake assets:precompile`  command does the trick.
+Our web server will have assets block that will server these compressed files.
+
+{% highlight bash %}
+upstream app {
+    # Path to Unicorn SOCK file, as defined previously
+    server unix:/tmp/unicorn.dailyReport.sock fail_timeout=0;
+}
+
+server {
+    listen 80;
+    server_name localhost;
+
+    # Application root, as defined previously
+    root /opt/dailyReport/public;
+
+    try_files $uri/index.html $uri @app;
+
+    location @app {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_pass http://app;  # point to our upstream server list
+    }
+	
+	#Server compressed assets
+	location ~ ^/(assets)/  {
+	  gzip_static on; # to serve pre-gzipped version
+	  expires max;
+	  add_header Cache-Control public;
+	}
+	
+    error_page 500 502 503 504 /500.html;
+    client_max_body_size 4G;
+    keepalive_timeout 10;
+} 
+{% endhighlight %}
+
 
 
 #### How will we start our app?
@@ -219,8 +292,8 @@ For this we'll create two dockerfiles
 - Base Dockerfile 
 
 	It'll contain latest version of ruby and rails installed.
-	Sjince ruby 1.9.x EOL is near. The newer 2.1.x version is comparatively fast, and bug free.
-	So, we'll use ruby 2.1.2. We'll use rbenv to install. It'll also help us to update ruby version without re-building docker image again. __how?__
+	Since ruby 1.9.x EOL is near. The newer 2.1.x version is comparatively fast, and bug free.
+	So, we'll use ruby 2.1.2 and we'll get it installed by rbenv. It'll also help us to update ruby version without re-building docker image again. __how?__
 
 
 
@@ -229,14 +302,12 @@ For this we'll create two dockerfiles
 docker run -it baseDockerImage /bin/bash
 	$ rbenv install ruby 2.1.3
 	$ exit
-
 docker commit -m "ruby2.1.3" CONTAINER_ID  
-
 {% endhighlight bash %}		
 
 - Main Dockerfile
 	
-	This will be our Dockerfile for our application. It'll include 'unicorn.rb', 'run.rb' and 'reverse proxy' configuration
+	This will be our Dockerfile for our application. It'll include 'unicorn.rb', 'run.rb' and 'reverse proxy' configuration. Basically, everything that's required to run ror app natively.
 
 
 ------
@@ -302,7 +373,7 @@ docker build -t "myDockerfiles/base_ruby" .
 docker run -it --rm  myDockerfiles/baseRubyImg /bin/bash -c 'ruby -v'
 {% endhighlight %}
 	
-Here goes our main app Dockerfile that we will use 
+Here comes our main app Dockerfile that we will use 
 
 
 **myDockerfiles/main**
