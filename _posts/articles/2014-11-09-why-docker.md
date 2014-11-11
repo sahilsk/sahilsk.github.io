@@ -88,12 +88,12 @@ Notable docker features
 
 - Pause/Unpause container
 	
-	While Stop and Start feature was already there in the Docker, but with recently released docker, you can now `pause` and `unpause` your container. 
+	While Stop and Start feature was already there in the Docker, but with recently released docker, you can now `pause` and `unpause` your container as well. 
 	
-	While you can always use SIGSTOP and SIGCONT on all the processes in the process tree for a container to implement it yourself but they are not always sufficient for stopping and resuming tasks in userspace. 
+	_Why do you care?_ You can always use SIGSTOP and SIGCONT on all the processes in the process tree for a container to implement it yourself but they are not always sufficient for stopping and resuming tasks in userspace. 
 
 	That's where [cgroup freezer](https://www.kernel.org/doc/Documentation/cgroups/freezer-subsystem.txt) comes into picture and same is now implemented in docker to avail pause/unpause functionality.  
-	 Docker also exposes this functionality via its API.
+	Docker also exposes this functionality via its API.
 	    
 -  Build Once, Run Anywhere
 
