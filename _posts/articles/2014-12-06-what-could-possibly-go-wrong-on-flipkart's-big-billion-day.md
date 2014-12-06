@@ -1,5 +1,5 @@
 ---
-laflipkartt: post
+layout: post
 title: "What could possibly go wrong on flipkart's Big-Billion-Day?"
 modified:
 categories: articles
