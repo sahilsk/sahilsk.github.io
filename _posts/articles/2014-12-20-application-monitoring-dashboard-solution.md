@@ -4,7 +4,7 @@ title: "Application Monitoring Dashboard Solution"
 modified:
 categories: articles
 excerpt: 
-tags: [dashboard, monitoring]
+tags: [dashboard, monitoring, graphite, carbon, polymer, mongodb]
 comments: true
 share: true
 image:
@@ -13,25 +13,23 @@ author: sahilsk
 date: 2014-12-20T05:23:42+05:30
 ---
 
-Application Monitoring Dashboard Solution
-===================================
-
 In this post i'd discuss some of the option available for application
 monitoring. As your application grows, your technology stack also grows
 and so the surprises that comes along. These often lead to out-of-service
 statuses which I presume no organization,small or big, can bear.
 
+So, let's get started. 
 
 __Application Monitoring__ : It can include minimum monitoring of application
 live status and can extend upto application performance monitoring.
 When you have all these metrics before you, you'll be able to gauge your
-infrastructure efficiency and scalability in more predictive way.
+infrastructure efficiency and scalability in more predictive manner.
 
 Imaging your application is getting popular and no. of users are increasing
 day by day. With given metrics you'll be able to see how many RAM, CPU or instances
 are being used and how much is available. With current resource utilization and
-growing user base you can take necessary measure to ensure smooth running your
-infrastructure.
+growing user base stats in hand, you can take necessary measures to ensure smooth operation of your
+service.
 
 What are these metrics that we should be wary about?
 ----------------------------------------------------
@@ -43,30 +41,32 @@ Few Important Metrics are:  __RAM__ , __CPU__, __Disk space__, __bandwidh__, __D
 
 * __Disk I/O__
 
-  Processor will wait till process finish reading file. So, having a fast Disk input/output operations on a physical disk will improve your application performance considerably.
+  Processor will wait till process finish reading file. So, having a fast Disk input/output operations on a physical disk will improve your application performance significantly.
 
   That's why SSD's are nowadays popular. 30% faster file opening speed than traditional HDD. File Copy or Write Speed of SSD is typically about 200 MB/s -550 MB/s while of HDD it's very low around 50-12MB/s.
 
-  You can easily find the difference in turnaround time of your Disk I/O heavy application by just changing single hardware.
+  You can easily find the difference in turnaround time of your Disk I/O heavy application by just changing a single hardware.
+  But do you really require HDD? See your application metrics and answer yourself ;)
 
 * __RAM__
 
   More the ram, more process can run and stay in memory for long.
   This mean less Disk I/O and page swapping.
   With hardware getting cheap, having extra RAM won't cost much.
-  However, knowing when to increase RAM is the purpose of this post. Just take note of last couple of days RAM Usage and decide your next step.
+  
+  However, knowing when to increase RAM is the purpose of this post. One option is just take note of RAM usage in last couple of days and decide your next step.
 
 * __CPU__
 
-  For computation heavy application just RAM is not enough. You need powerful mind to process them all. So, do watch your CPU performances as well. >80% means you should upgrade to more powerful machines with more cores inside.
+  For computation heavy application just RAM is not enough. You need powerful mind to process them all. So, do watch your CPU performances as well. Generally, if metrics shows CPU usage greater than 80% for most of the time, it means you should upgrade to more powerful machines with more cores inside.
 
 
 * __Bandwidth__
 
-  Not only it'll help track your monthly bandwidth bills but also help you trace anomaly. Many times watchings bandwidth usage pattern give you clues on what's happing wrong if it's happing wrong way. :)
+  Not only it'll help track your monthly bandwidth bills but also help you trace anomaly. Many times watching bandwidth usage pattern give you clues on what's happing wrong if anything is going wrong. 
 
 
-## So, how to get metrics?
+## Next Step is, how to get these metrics?
 
 Start with Web server. If you uses nginx then gather its statistics.
 Afterward, gather App Server statistics. If you have RoR then you might have used or tried unicorn. So, you might need to dig into its log file to gather metrics out of it.
@@ -128,55 +128,60 @@ This solution is taken out of them.
 
 * Monitoring like a boss ( Design Yourself)
 
-```
+{% highlight bash %}
 Phusion Passenger        CollectD+  
-+                    +
-|                    |
-|                    |
-v                    v
-Mongodb        Carbon(Graphite)
-+-------++----------+
-||
-||
-||
-+-----vv-----+
-|            |
-|   JSON API |
-|            |
-|            |
-+-----+------+
-|
-v
+        +                    +      
+        |                    |      
+        |                    |      
+        v                    v      
+     Mongodb        Carbon(Graphite)
+         +-------++----------+      
+                 ||                 
+                 ||                 
+                 ||                 
+           +-----vv-----+           
+           |            |           
+           |   JSON API |           
+           |            |           
+           |            |           
+           +-----+------+           
+                 |                  
+                 v                  
+                                    
+          +------------+            
+          | Your cool  |            
+          | Dashboard  |            
+          |            |            
+          +------------+            
 
-+------------+
-| Your cool  |
-| Dashboard  |
-|            |
-+------------+
+{% endhighlight %}
 
-```
+  Send _Passenger_ data into MongoDB. Send _CollectD_ metrics into _Graphite_ database(_whisper_). Graphite provide JSON API interface [render url api][8] which can provide data endpoint to real time metrics.
 
-  Send _Passenger__ data into MongoDB. Send CollectD metrics into Graphite database. Graphite provide JSON API interface [render url api][8] which can provide data endpoint to real time metrics.
-
-Now, with collected JSON data from MongoDB and Carbon, you can have a common central JSON API endpoint that will power your dashboard to visualize metrics.
+Now, with collected JSON data from MongoDB and Carbon, you can have a common central JSON API endpoint that can power your dashboard to visualize metrics.
 
 
 ### Little on choosing technology for building Dashboard
 
 The big problem broken down into small sub problems.
 
+{% highlight bash %}
+  
   Get Data -> Store data ->  Provide JSON Interface -> Pull & Visualize Data
 
-For building _realtime dashboard_ you can use any javascript MVC framework. _AngualarJS__ or __emberJS__.
+{% endhighlight %}
+  
+For building _realtime dashboard_ you can use any javascript MVC framework. __AngualarJS__ or __emberJS__ .
 
-For creating widgets ( gauge, pie chart, geomap etc) you can use
-__AngularJS__ template [directives][9] or __emberjs__ [components][10].
+For creating widgets ( gauge, pie chart, geomap etc) you can use __AngularJS__ template [directives][9] or __emberjs__ [components][10].
 
-While approaches are fine, but i would to introduce [web components][11] here, specially [polymer][12].
+While these approaches are fine, but i would like to introduce [web components][11] here, specially [polymer][12].
 
 >Web Components usher in a new era of web development based on encapsulated and interoperable custom elements that extend HTML itself. Built atop these new standards, Polymer makes it easier and faster to create anything from a button to a complete application across desktop, mobile, and beyond.
 
 With polymer you can create custom widgets very cleanly. Best part is you can re-use them in your next cool projects.
+
+So, plugging peices together through standard interface you can build a nice appliclation monitoring dashboard for your infrastructure.
 
 
 
