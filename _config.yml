@@ -5,14 +5,14 @@ locale: en_US
 description: ...awesome chores of an engineer
 #logo: site-logo.png
 search: true
-#url: http://localhost:4000
-url: http://sahilsk.github.io
+url: http://localhost:4000
+#url: http://sahilsk.github.io
 
 
 # Jekyll configuration
 
 permalink:   /:categories/:title/
-markdown:    kramdown
+markdown:    redcarpet
 highlighter: pygments
 sass:
   sass_dir: _sass
@@ -20,6 +20,9 @@ sass:
 gems:
   - jekyll-sitemap
 
+redcarpet:
+  extensions: []
+  
 kramdown:
   auto_ids: true
   footnote_nr: 1
@@ -29,6 +32,7 @@ kramdown:
 
 include: [".htaccess"]
 exclude: ["lib", "config.rb", "Capfile", "config", "log", "Rakefile", "Rakefile.rb", "tmp", "less", "*.sublime-project", "*.sublime-workspace", "test", "spec", "Gruntfile.js", "package.json", "node_modules", "Gemfile", "Gemfile.lock", "LICENSE", "README.md", "vendor"]
+
 
 
 # Site owner

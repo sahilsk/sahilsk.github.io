@@ -13,9 +13,6 @@ author: sahilsk
 date: 2015-02-18T18:59:37+05:30
 ---
 
-Docker take on Database
-------------------------
-
 Rarely you might have heard of people running database in container in production environment. If there are any, gutsy they must be. 
 
 Database is critical component of every three tier service. With advent of NoSQL especially Document type databases, like MongoDB, database selection also play a role in deciding your technology stack. Though with failure of any component in stack may take down your whole service along, however, with database down you also looses data. 
@@ -29,21 +26,40 @@ Very daunting question it might look but if we paraphrase it, it looks like this
 
 With database running, 
 
-1. I should be able to collect database metrics   
-  - most of the metrics usually come from logs  
-2. I should be able to shutdwon gracefully, if not in use  
-3. I should be able to start it with last saved data  
-4. I should have no latency i.e 
+1. I should not lost my data.
+
+  My data should persist on disk and should stay there even when service is stop.
+  
+2. I should be able to collect database metrics   
+
+  Most of the metrics usually come from logs. Need not to mention logs also help us in debugging in case some anomally occur in operation.
+  
+3. I should be able to shutdwon gracefully, if not in use  
+  
+  Some database require cleaning operation on shutdown phase. It also remove lock and release resources in cleaning step. When database is forcefully killed some resources not get released. Usually database respond to SYSINT and SYSKILL command by capturing them and taking decision. 
+  
+4. I should be able to start it with last saved data.
+  
+  When database re-start, it should resume operation from last saved state. State is usually saved in files(disk). So, effective journaling should be there.
+  
+5. I should have no latency i.e 
   - no network latency  
+  
+    In distributed environment network latency can become a overhead. When there are thousands of IOPS per seconds it can easily become bottleneck.  
+  
   - no disk i/o latency 
-5. I should be able to scale it 
-  - through master-master replica or master-slave replica 
+  
+    Though memory and journaling help in minimizing disk i/o operations. But a faster disk access always lead to faster throughput. With hardwares getting cheaper, SSD has gained popularity. Being fast often means fast operation.
+  
+6. I should be able to scale it 
+
+  Through master-master replica or master-slave replica 
   
 
-Not that daunting. Right? Now, let's try to answer each one of them in this series.
+Not that daunting now. Right? 
 
 
-Let me recap docker performance impact on application running inside:
+Let me recap docker performance impact on application running inside it.
 In performance, it’s tantamount to speed you get natively. Here’s a brief overview on it.
 
 - **CPU** :  CPU performance is totally Native. Same as you get without running inside Docker.
@@ -57,10 +73,6 @@ In performance, it’s tantamount to speed you get natively. Here’s a brief ov
 
 
 
-I might be missing few other things connected especially to application like Database. Here, i'd appreciate few help from community to add their views in the comment.
+I might be missing few other things connected especially to application like Database. Pardon my ignorance. Here, i'd appreciate few help from community to add their views in the comment.
 
 
-### Let's get started: 
-
-- MongoDB standalone in Docker
-- MongoDB master-slave in Docker

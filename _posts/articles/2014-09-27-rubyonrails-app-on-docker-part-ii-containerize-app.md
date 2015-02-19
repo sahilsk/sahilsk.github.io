@@ -40,26 +40,27 @@ Index
 1. Setup and Install database
 -------------------------
 
-	For this application we'll use MySQL. There are two ways to run MySQL
-	- Run without container
-	- Run inside Docker
+For this application we'll use MySQL. There are two ways to run MySQL
+
+- Run without container
+- Run inside Docker
 
 
-	Q. Any performance impact when runng inside Container?
-	---
+Q. Any performance impact when runng inside Container?
+----------------------------------------------
 
-	In docker, cpu performance is native, disk latency is native,
-	memory is not native but could be made. Same is true for network latency.
+In docker, cpu performance is native, disk latency is native, 	memory is not native but could be made. Same is true for network latency.
 
-	Nowadays hardware are cheap but software are costly. So, we don't need to worry about little memory that Docker keep aside. If you really want to squash every single drop, then there are ways to do so. Network latency also can be made as fast as of native. This small minor reduction we can bear.
+Nowadays hardware are cheap but software are costly. So, we don't need to worry about little memory that Docker keep aside. If you really want to squash every single drop, then there are ways to do so. Network latency also can be made as fast as of native. This small minor reduction we can bear.
 
-	So, having compromised with Memory and Network latency, we're proceeding to Dockerize MySQL instance.
+So, having compromised with Memory and Network latency, we're proceeding to Dockerize MySQL instance.
 
-	Luckily, there is already mysql Dockerfile ready in the docker hub: [MySQL Dockerfile](https://github.com/dockerfile/mysql) 
+Luckily, there is already mysql Dockerfile ready in the docker hub: [MySQL Dockerfile](https://github.com/dockerfile/mysql) 
 
 
 **dockerfile/mysql**
-{% highlight bash linenos %}
+
+``` bash
 #
 # MySQL Dockerfile
 #
@@ -93,7 +94,7 @@ CMD ["mysqld_safe"]
 
 # Expose ports.
 EXPOSE 3306
-{% endhighlight %}
+```
 
 
 Dockerfile is quite simple. Isn't it? In starting few lines, we're installing mysql server and granting user root all privileges.
@@ -102,10 +103,11 @@ Line 24, however, need little elboration. Data directory will enable direct acce
 
 Let's setup and run mysql
 
-{% highlight bash %}
+``` bash
 #Pull and Run mysql image
 sudo docker run -d --name mysql -p 3306:3306 dockerfile/mysql
-{% endhighlight %}
+
+```
 
 
 This one line is suffice to run mysql server up and running.
@@ -114,7 +116,7 @@ To verify , we'll start mysql client using the same image but different command.
 
 {% highlight bash %}
 	sudo docker run -it --rm --link mysql:mysql dockerfile/mysql bash -c 'mysql -h $MYSQL_PORT_3306_TCP_ADDR'
-{% endhighlight %}
+```
 
 ### How to connect our application with database?
 
@@ -141,28 +143,29 @@ There are actually two way to specify mysql connection to our app.
 2. Containerize RoR Apps
 -------------------------
 
-	RoR framework already comes with sensible default best practices of Software Development.
-	However, there are few configuration that i'd like to stress on:
+RoR framework already comes with sensible default best practices of Software Development.
+However, there are few configuration that i'd like to stress on:
 
-	- Session Storage
+- Session Storage
 
-		Store session information in database. This will enable our app to behave more like stateless app. Also, this is essential if we want to scale our infrastructure further 
+	Store session information in database. This will enable our app to behave more like stateless app. Also, this is essential if we want to scale our infrastructure further 
 
-	- Secrets
+- Secrets
 
-		Database configuration, RoR Secret key (SECRET_KEY_BASE) , environment , smtp credentials, or other 3rd party addons secret that your app might be using, should not be hardcoded in configuration file. Instead, they should be picked from environment.
+	Database configuration, RoR Secret key (SECRET_KEY_BASE) , environment , smtp credentials, or other 3rd party addons secret that your app might be using, should not be hardcoded in configuration file. Instead, they should be picked from environment.
 
 
-	Here's one example showing database credentials being picked from environment.
+Here's one example showing database credentials being picked from environment.
 
 __config/database.yml__
-{% highlight yaml %}
+
+``` yaml
 production:
   <<: *default
   database: <%= ENV['DATABASE_PROD'] %>
   username: <%= ENV['DATABASE_USERNAME'] %>
   password: <%= ENV['DATABASE_PASSWORD'] %>
-{% endhighlight %}
+```
 
 
 
@@ -179,7 +182,8 @@ NOTE: Setting `DATABASE_URL` environment variable will take precendence over con
 We'll choose widely adopted Unicorn as our web server.
 
 **unicorn.rb**
-{% highlight ruby linenos %}
+
+``` ruby
 # Set the working application directory
 # working_directory "/path/to/your/app"
 working_directory "/opt/dailyReport"
@@ -200,7 +204,7 @@ worker_processes 2
  
 # Time-out
 timeout 30
-{% endhighlight  %}
+```
 
 
 ### Web Server for RoR: Nginx
@@ -210,7 +214,7 @@ As the rail guides says, best practice to  serve assets is through nginx. Here n
 To make assets serving faster, we'll gzip our styelsheets and javascripts. How? This is not in the scope of this article, however in rails simple `rake assets:precompile`  command does the trick.
 Our web server will have assets block that will server these compressed files.
 
-{% highlight bash %}
+``` bash
 upstream app {
     # Path to Unicorn SOCK file, as defined previously
     server unix:/tmp/unicorn.dailyReport.sock fail_timeout=0;
@@ -243,7 +247,7 @@ server {
     client_max_body_size 4G;
     keepalive_timeout 10;
 } 
-{% endhighlight %}
+```
 
 
 
@@ -252,7 +256,8 @@ server {
 Here comes run.sh into picture. We've written our startup script in this file.
 
 **run.sh**
-{% highlight bash %}
+
+``` ruby
 RAILS_ENV=$RAILS_ENV
 : ${RAILS_ENV:="development"}
 export RAILS_ENV
@@ -280,7 +285,7 @@ service nginx restart
 echo "Running unicorn"
 bundle exec unicorn_rails -c /etc/dailyReport/unicorn.rb -E $RAILS_ENV -d
 
-{% endhighlight %}
+```
 
 let's wrap these lines inside `run.sh` file which will serve as our app startup script.
 
@@ -298,13 +303,13 @@ For this we'll create two dockerfiles
 
 
 
-{% highlight bash %}
+``` bash
 # Note down its container id
 docker run -it baseDockerImage /bin/bash
 	$ rbenv install ruby 2.1.3
 	$ exit
 docker commit -m "ruby2.1.3" CONTAINER_ID  
-{% endhighlight bash %}		
+```	
 
 - Main Dockerfile
 	
@@ -315,7 +320,7 @@ docker commit -m "ruby2.1.3" CONTAINER_ID
 
 **myDockerfiles/base_ruby**
 
-{% highlight bash %}
+```
 #
 # Ruby with rbenv Dockerfile
 #
@@ -363,22 +368,23 @@ RUN gem install rails
 RUN rbenv rehash
 
 CMD /bin/bash
-{% endhighlight %}
+```
 
 
-	Let's build and tag it
+Let's build and tag it
 
-{%  highlight bash %}
+``` bash
 docker build -t "myDockerfiles/base_ruby" .
 # Run and test
 docker run -it --rm  myDockerfiles/baseRubyImg /bin/bash -c 'ruby -v'
-{% endhighlight %}
+```
 	
 Here comes our main app Dockerfile that we will use 
 
 
 **myDockerfiles/main**
-{% highlight bash linenos %}
+
+``` bash
 #
 # dailyReport in Container
 #
@@ -444,13 +450,14 @@ ENV RAILS_ENV development
 
 #
 CMD /bin/bash /etc/dailyReport/run.sh
-{% endhighlight %}
+
+```
 
 
 Let's build out main app now.
 
 
-	$  docker build -t myDockerfiles/dailyreport .
+	$ docker build -t myDockerfiles/dailyreport .
 
 It all goes well, you now have two images built succesfully.
 
@@ -465,7 +472,7 @@ Now lets run our app container
 
 	$docker run -d -p 49172:80  -v /var/run/mysqld:/var/run/mysqld:ro  --restart="always" -e "RAILS_ENV=production"  myDockerfiles/dailyreport
 
-You can visit localhost:49172 and confirm if your app is launched 
+You can visit *localhost:49172* and confirm if your app is launched 
 
 You can run more than one instance. Simple change the port and execute.
 	
