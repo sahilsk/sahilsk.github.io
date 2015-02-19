@@ -26,7 +26,7 @@ Very daunting question it might look but if we paraphrase it, it looks like this
 
 With database running, 
 
-1. I should not lost my data.
+1. I should not lost my data. 
 
   My data should persist on disk and should stay there even when service is stop.
   
@@ -38,11 +38,11 @@ With database running,
   
   Some database require cleaning operation on shutdown phase. It also remove lock and release resources in cleaning step. When database is forcefully killed some resources not get released. Usually database respond to SYSINT and SYSKILL command by capturing them and taking decision. 
   
-4. I should be able to start it with last saved data.
+4. I should be able to start it with last saved data.  
   
   When database re-start, it should resume operation from last saved state. State is usually saved in files(disk). So, effective journaling should be there.
   
-5. I should have no latency i.e 
+5. I should have no latency i.e   
   - no network latency  
   
     In distributed environment network latency can become a overhead. When there are thousands of IOPS per seconds it can easily become bottleneck.  
@@ -64,12 +64,12 @@ In performance, it’s tantamount to speed you get natively. Here’s a brief ov
 
 - **CPU** :  CPU performance is totally Native. Same as you get without running inside Docker.
 
-- **I/O** :   Docker support[ many storage backends](http://www.projectatomic.io/docs/filesystems/). By default it uses device Mapper by default and can be switched as per need. However, being said this simply switching storage backend Disk I/O won't get you faster **iops** that you get natively. However, if you use [docker volumes](https://docs.docker.com/userguide/dockervolumes/https://docs.docker.com/userguide/dockervolumes/) you'll get native speed. It also have few extra advantages which i'll cover in some future post.
+- **I/O** :   Docker support[ many storage backends](http://www.projectatomic.io/docs/filesystems/). Device Mapper is being used by default and can be switched as per need. However, being said this simply switching storage backend won't get you faster **iops** that you get natively. However, if you use [docker volumes](https://docs.docker.com/userguide/dockervolumes/https://docs.docker.com/userguide/dockervolumes/) you'll get native speed. It also has few extra advantages which i'll cover in some future post.
 
 
-- **Memory** : Docker set aside a little memory for memory accounting. However, it can be native. No overhead if you disable memory accounting (useful for hptc, probably not for everything else)
+- **Memory** : Docker set aside a little memory for memory accounting. However, it can be native i.e No overhead, if you disable memory accounting (useful for hptc, probably not for everything else)
 
-- **Network**: There is no overhead if you run with `–net host`. It's useful for > 1Gb/s workloads of if you have a high packet rate eg. VOIP, Gaming.
+- **Network**: There is no overhead if you run with `-–net host`. It's useful for > 1Gb/s workloads of if you have a high packet rate eg. VOIP, Gaming.
 
 
 
