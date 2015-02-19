@@ -114,7 +114,7 @@ This one line is suffice to run mysql server up and running.
 To verify , we'll start mysql client using the same image but different command.
 
 
-{% highlight bash %}
+``` bash
 	sudo docker run -it --rm --link mysql:mysql dockerfile/mysql bash -c 'mysql -h $MYSQL_PORT_3306_TCP_ADDR'
 ```
 

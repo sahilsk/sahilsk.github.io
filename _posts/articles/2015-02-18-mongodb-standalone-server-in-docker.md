@@ -10,7 +10,6 @@ image:
 date: 2015-02-18T19:43:10+05:30
 ---
 
-
 MongoDB 2.4.5 inside Docker
 --------------------------
 
@@ -20,6 +19,7 @@ MongoDB 2.4.5 inside Docker
 **Dockerfile** is to Docker what *Makefile* is to make
 
 file _Dockerfile_
+
 ``` bash
 #
 # MongoDB 2.4.5 Dockerfile
@@ -63,7 +63,7 @@ $ docker build -t sahilsk/mongo_2.4.5  .
 
 ## RUN
 
-  docker run -d sahilsk/mongo_2.4.5
+    $ docker run -d sahilsk/mongo_2.4.5
 
 
 ## Lets do some benchmarking
@@ -73,3 +73,4 @@ We'll employ [*mongoperf*](http://docs.mongodb.org/manual/reference/program/mong
 > Mongoperf is a utility for checking disk i/o performance of a server independent of MongoDB. It performs simple timed random disk i/o’s. 
 
 
+...to be continued
