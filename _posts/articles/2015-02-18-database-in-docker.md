@@ -53,11 +53,9 @@ With database running,
   
 6. I should be able to scale it 
 
-  Through master-master replica or master-slave replica 
-  
+    Through master-master replica or master-slave replica 
 
 Not that daunting now. Right? 
-
 
 Let me recap docker performance impact on application running inside it.
 In performance, it’s tantamount to speed you get natively. Here’s a brief overview on it.
@@ -70,7 +68,6 @@ In performance, it’s tantamount to speed you get natively. Here’s a brief ov
 - **Memory** : Docker set aside a little memory for memory accounting. However, it can be native i.e No overhead, if you disable memory accounting (useful for hptc, probably not for everything else)
 
 - **Network**: There is no overhead if you run with `-–net host`. It's useful for > 1Gb/s workloads of if you have a high packet rate eg. VOIP, Gaming.
-
 
 
 I might be missing few other things connected especially to application like Database. Pardon my ignorance. Here, i'd appreciate few help from community to add their views in the comment.
