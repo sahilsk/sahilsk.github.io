@@ -1,7 +1,7 @@
 ---
 layout: about
 title: About Me
-excerpt: "DevOps Engineer: Building Automated Infrastructure"
+excerpt: "Full Stack Engineer: Building Automated Infrastructure"
 modified: {}
 image: 
   feature: "vrindavan-gobardhan-yatra-01.jpg"
