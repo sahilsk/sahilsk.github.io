@@ -12,7 +12,9 @@ date: 2015-04-01T08:23:21+05:30
 
 With the news of facebook launching [react-native](https://code.facebook.com/videos/786462671439502/react-js-conf-2015-keynote-introducing-react-native-/), i couldn't stop myself from learning [ReactJS](https://facebook.github.io/react/).
 
-Earlier than that, i often ask myself this question on a thought of learning new javascript frameworks : **Why do i need to learn one more?**. News of react-native pique my interest and forced me to step out of my comfort zone. I fire up the browser with ignited fire to devour ReactJS.
+Earlier than that, i often ask myself this question on a thought of learning new javascript frameworks : **Why do i need to learn one more?**. 
+
+Wel, News of *react-native* pique my interest and forced me to step out of my comfort zone. I fire up the browser with ignited spirit to devour ReactJS. (:
 
 ## First Impression
 
@@ -33,6 +35,8 @@ Feature list:
 - Show tweets on page load (render at server side)
 - As user scroll down and reach near bottom, more tweets appends from mongoDB powered database (lazy loading)
 - As new tweets show up on twitter matching track string, user get realtime notification about it
+
+Please find source code on [github: sahilsk/track-tweets](https://github.com/sahilsk/track-tweets)
 
 ![RealtTime App]({{ site.url }}/images/realtimeApp_full.png)
 
@@ -121,3 +125,5 @@ ReactJS, Flux & Flow are more about philosophical expect of development rather t
 My new year resolution is to learn more on ReactJS, REACT-Native, flux & flow.
 
 
+
+Source code: [sahilsk/track-tweets](https://github.com/sahilsk/track-tweets)
