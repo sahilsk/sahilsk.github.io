@@ -24,9 +24,10 @@ Now browser only don't account for traffic surge but mobile applications as well
 With start of `internet of things` API layer has become norm. This post is about writing clients that will consume API ie. API Clients.
 
 If you're writing API client first thing you need to decide if you want to show http response code to users or not?
-If not, then how will intimate user about errors? use custom error code. This is also good.
+If not, then how will you intimate user about errors? use custom error code. This is also good.
 
 However, there is a better way: best of both world: Put both of them. Put status to align your response code with [http status codes](http://en.wikipedia.org/wiki/Http_error_codes)
+
 I personally feel attaching HTTP status code with every response is a nice way of enriching api-client response. 
 
 ``` json
@@ -62,7 +63,7 @@ Excerpt from Twitter Api documentation:
 
 >> If you see an error response which is not listed in the [twitter error code table](https://dev.twitter.com/overview/api/response-codes), then fall back to the HTTP status code in order to determine the best way to address the error.
 
-This says we need http response code as well if error code is missing in api resopnse. So, in api client response there should be ** http status code **.
+This says we need http response code as well if error code is missing in api resopnse. So, in api client response there should be **http status code**.
 
 
 A simple informative api client response could be :
@@ -144,7 +145,6 @@ Isn't it __cleaner__, __informative__ and that __without loosing__ any peice of 
 
 References
 ------------
-
 
 - http://stackoverflow.com/questions/942951/rest-api-error-return-good-practices
 - https://blog.apigee.com/detail/restful_api_design_tips_for_handling_exceptional_behavior
