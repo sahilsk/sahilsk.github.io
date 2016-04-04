@@ -12,7 +12,6 @@ url: http://sahilsk.github.io
 # Jekyll configuration
 
 permalink:   /:categories/:title/
-markdown:    redcarpet
 highlighter: pygments
 sass:
   sass_dir: _sass
