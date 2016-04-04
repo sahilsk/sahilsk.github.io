@@ -6,7 +6,7 @@ categories: articles
 excerpt:
 tags: ["worker", "devops", "architecture"]
 image:
-  feature: "workers.png"
+  feature: "workers.jpg"
 comments: true
 share: true
 author: sahilsk
