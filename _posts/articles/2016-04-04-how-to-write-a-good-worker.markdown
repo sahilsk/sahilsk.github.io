@@ -6,9 +6,7 @@ categories: articles
 excerpt:
 tags: []
 image:
-  feature: "ami_lifecycle.png"
-  credit: "Apache CloudStack"
-  creditlink: "http://people.apache.org/~gochiba/en-US/html-single/"
+  feature: "workers.png"
 comments: true
 share: true
 author: sahilsk
