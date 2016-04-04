@@ -4,7 +4,7 @@ title: How to Write a Good Worker?
 modified:
 categories: articles
 excerpt:
-tags: []
+tags: ["worker", "devops", "architecture"]
 image:
   feature: "workers.png"
 comments: true
