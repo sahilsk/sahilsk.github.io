@@ -58,6 +58,8 @@ Difference between AWS Lambda vs Webtask.io
   check. 70% errors you can avoid here only.
 - AWS lambda docs are very rich and you can finally, every piece of information
   there.
+- realtime debugging is very easy in webtask.io with their streaming logs. It
+  mean less context switching.
 - pricing ???
 
 
