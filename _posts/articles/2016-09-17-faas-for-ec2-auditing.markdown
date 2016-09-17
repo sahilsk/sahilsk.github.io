@@ -2,11 +2,15 @@
 layout: post
 title: FaaS for Ec2 Auditing
 modified:
-categories: _posts/articles
-excerpt:
-tags: []
+categories: articles
+tags: ['aws', 'ec2', 'faas', 'aws lambda', 'webtask.io']
+comments: true
 image:
-  feature:
+  feature: 
+  credit: "me (:"
+author: sahilsk
+published: true
+
 date: 2016-09-17T17:55:59+05:30
 ---
 
@@ -18,13 +22,12 @@ You can read more about serverless architecture on [martin fowler
 blog](http://www.martinfowler.com/articles/serverless.html).
 
 
-Here i want to pen down one of the use case that fit perfectly for FaaS :
-Auditing
+Here i want to pen down one of the use case that fit perfectly for FaaS: Auditing
 
 With growing team it become difficult to audit your infrastructure as more and
-more resources are being created. Is tagging standards are followed or not, are
+more resources are being created. Are tagging standards are being followed or not, are
 security groups security guidelines are followed or not, or the right ssh-key
-pair, image-id or what-not is used for creation of new resources are not.
+pair, image-id or what-not is used for creation of new resources or not.
 
 So, wouldn't it be great if we can write one service that poll aws resources
 periodically and get us this audit report? YES. But ...
@@ -36,7 +39,7 @@ But there is one friendly, quick and very cheap way of doing it. Enter: FAAS.
 
 Create your function and you are done. Seriously. That's all it require.  
 
-Webtask.io is one such FaaS. Though AWS lambda is also there but i found webtask.io deployment more easier.
+Webtask.io is one such FaaS. Though AWS lambda is also there but i found webtask.io deployment more easier and snappy.
 
 Difference between AWS Lambda vs Webtask.io
 --------
@@ -114,7 +117,7 @@ service.
 ![Alt architecture](/images/faas_ec2_auditing.png)
 
 
-Imlementations
+Imlementation: show me the code
 ------
 
 
@@ -123,6 +126,13 @@ Imlementations
 - Create webtask.io task and deploy it with aws credentials and alert topic
   arn(`ec2_audit_alert`). Code is smart enough to subscribe to this sns automatically.
 - Create aws cloudwatch event rule and point it to `ec2_launches_check` sns.
+
+
+Here is the result
+-----
+
+
+![Alt audit-result](/images/audit_result.png)
 
 
 
