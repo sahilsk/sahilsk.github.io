@@ -35,6 +35,10 @@ IPSec emerged as a viable network security standard because enterprises wanted t
 How are we doing?
 ---
 
+Read through this guide before jumping here: http://www.slashroot.in/linux-ipsec-site-site-vpnvirtual-private-network-configuration-using-openswan
+I strongly recommend it.
+
+
 - Launch two servers one in each VPC in public subnet with new security group
 - Install openswan on both of them
 - configure openswan
@@ -287,10 +291,8 @@ Here we're modifying mumbai vpc route table. We're telling it that packets with 
 Same changes are required at Singapore side stage VPC routebles.
 
 
-Conclusion
--------
-
-With this end your vpn setup. You may try connecting other side servers.
+Test Connectivity
+---------
 
 Lets say `Server-A-In-Sg` listening on port `XYZ` want to reach `Server-B-In-Mumbai` listening on port `PQR`. Server-A-In-Sg security group will allow port XYZ from Server-B-In-Mumbai private ip say, `172.19.x.y`. 
 
@@ -314,7 +316,13 @@ From Server-B-In-Mum server try reaching Singapore side server:
 If you see conected message you are all up.
 
 
+Conclusion
+-------
 
-Thanks (:
+Openswan configuration is very easy to understand and write. On AWS all firewall level settings are taken care by security grups and route table thereby making process more snappier.
+One may have some concerns for production setup. Like how to make it highly available? There Linux-HA can be used with floating ip technique. But more on this, perhaps in next article.
+
+
+
 
 
