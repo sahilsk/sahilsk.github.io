@@ -35,8 +35,8 @@ IPSec emerged as a viable network security standard because enterprises wanted t
 How are we doing?
 ---
 
-Read through this guide before jumping here: http://www.slashroot.in/linux-ipsec-site-site-vpnvirtual-private-network-configuration-using-openswan
-I strongly recommend it.
+Read through this [article](http://www.slashroot.in/linux-ipsec-site-site-vpnvirtual-private-network-configuration-using-openswan) before continuing from here.
+I strongly recommend it. It'll help you understand configuration parameters better.
 
 
 - Launch two servers one in each VPC in public subnet with new security group
