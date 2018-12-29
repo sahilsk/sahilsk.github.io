@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Adoption of Git Backed Workflow: GitOps"
+title: "Adoption of Git backed automation Workflows: GitOps"
 modified:
 categories: articles
 excerpt:
@@ -14,15 +14,12 @@ date: 2015-07-21T16:25:58+05:30
 date: 2018-12-29T16:33:43+05:30
 ---
 
-Adoption of new workflows: GitOps
----
-
 When I first read about GitOps workflow by [weave.works](https://www.weave.works/blog/gitops-operations-by-pull-request), I was a bit surprised by their audacity.
 I mean moving your deploy button from a central policy & compliance controlled dashboard locked by active directory into the wild in git where it's visible to prying eyes, dying to commit to see their code up and running in production. That's really a daunting move.
 
 Especially for a business where every outage means loss in revenue, why would someone take chances with failures?
 
-On second thought it all make sense. I can think of two main driving factor for adoption of gitops in coming days
+On second thought, in this cloud era, it all make sense. I can think of two main driving factor for adoption of gitops in coming days
 
 - **Velocity**: Gone are days when quarterly or monthly deployments were enough. So, we need to minimize manual intervention as least as we could. Excuse of security and compliance should not hinder adoption of new technology. With open mindset you can bring the lost velocity back to your team
 - **Inefficiency of traditional processes** and **Adoption of more and more open-source tools**: People are trying their best to make this world a better place. Adoption of public clouds eg. AWS or Azure, has given all a common ground to solve a problem once and solve it for all. Tools like terraform, jenkins, and vast knowledge spread across stackoverflow is at your perusal. Battles have already been fought. Use their sacrifice to improve life of others.
