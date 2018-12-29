@@ -18,12 +18,14 @@ Adoption of new workflows: GitOps
 ---
 
 When I first read about GitOps workflow by [weave.works](https://www.weave.works/blog/gitops-operations-by-pull-request), I was a bit surprised by their audacity.
-I mean moving your deploy button from a central policy & compliance control dashboard locked by active directory into the wild in git where it's visible to prying eyes, dying to commit to see their code up and running in production. That's really fearless move. Especially for a business where every outage means loss in revenue. Why would someone take chances of failures?
+I mean moving your deploy button from a central policy & compliance controlled dashboard locked by active directory into the wild in git where it's visible to prying eyes, dying to commit to see their code up and running in production. That's really fearless move.
+
+Especially for a business where every outage means loss in revenue. Why would someone take chances with failures?
 
 On second thought it all make sense. I can think of two main driving factor for adoption of gitops in coming days
 
 - **Velocity**: Gone are days when quarterly or monthly deployments were enough. So, we need to minimize manual intervention as least as we could. Excuse of security and compliance should not hinder adoption of new technology. With open mindset you can bring the lost velocity back to your team
-- **Adoption of more and more open-source tools**: People are trying their best to make this world a better place. Adoption of public clouds eg. AWS or Azure, has given all a common ground to solve a problem once and solve it for all. Tools like terraform, jenkins, and vast knowledge spread across stackoverflow is at your perusal.
+- **Inefficiency of traditional processes** and **Adoption of more and more open-source tools**: People are trying their best to make this world a better place. Adoption of public clouds eg. AWS or Azure, has given all a common ground to solve a problem once and solve it for all. Tools like terraform, jenkins, and vast knowledge spread across stackoverflow is at your perusal. Battles have already been fought. Use their sacrifice to improve life of others.
 
 
 Now, lets talk about what are the pre-requisites. So, what has made such pure automation backed deployment workflows like GitOps possibles?
@@ -32,10 +34,12 @@ Now, lets talk about what are the pre-requisites. So, what has made such pure au
 - **Automate every manual steps**: First and foremost be reasonable behind every process you have. Have a constructive arguments for having a manual step for a automatable workflow. Chances are you don't need those manual interventions.
 - **Good test coverage**: Adopt [test-pyramid](https://martinfowler.com/bliki/TestPyramid.html) thinking. Have a fine balance between unit and functional tests. More functional tests means more time to complete. So, as much as you can, move 70% of your test cases in unit tests and keep rests for functional and end-to-end tests. This will help you balance velocity and reliability.
 - **Diff**: Find a way to generate a diff of your already deployed application and to be deployed one. If you are using k8s you can leverage [kubediff](https://github.com/weaveworks/kubediff) or if you are using terraform in your enviroment you can use [terraform plan](https://www.terraform.io/docs/commands/plan.html) command. This will help you make decisions whether the new version is good to go without any destructive consequences. This step is very important and it's very important to get it right. Destructive actions could be eg. giving application limit-requests that your cluster can't handle, or too open or too close firewall policy, opening ports that are not supposed to be opened, etc.
-- **Git branch**: Respect git branches  and keep all branches as close as possible. For a promotion based environments you need to start with least two branches:  qa and master or (develop and master). Every commit in qa branch is deployed in the qa environment. When QA guys give you a go-ahead for production, create a PR out of QA branch and merge it in the master branch. This will be the trigger for deployment in the production. If anything fails, don't rollback anything manually. Commit and send a new pull request and repeat.
+- **Git branch**: Respect git branches  and keep all branches as close as possible. For a promotion based environments you need to start with at least two branches: **qa** and **master** or (develop and master). 
+
+  Every commit in qa branch is deployed in the qa environment. When QA guys give you a go-ahead for production, create a pull request out of QA branch and merge it in the master branch. This will be the trigger for deployment in the production. If anything fails, don't rollback anything manually. Commit, send a new pull request and repeat.
 
 
-You just can't go ahead and start doing gitops. You need a headstart. So, here are simple steps to start using gitops right after reading this article
+Sounds easy but you can't go ahead and start doing gitops right away. You need a headstart. So, here are some simple steps to help you get staretd with gitOps.
 
 
 ![GitOps Workflow](/images/gitops-gitrepo.jpg)
@@ -52,7 +56,7 @@ You just can't go ahead and start doing gitops. You need a headstart. So, here a
   - `notification channels: [Emails][,Slack channels]`
   - `maintainer address`
 
-4. Copy same descriptors in all the branches.
+4. Copy same descriptors in all the branches. By looking at those descriptors one should be able to tell which environment has what version of a paritcular serivce running. By looking at commits he should also be able to tell last deployments history.
 5. Use jenkins to write following generic parametrized pipelines
   - **Healthcheck pipeline**: Given set of parameters eg. service name, it goes and run health check for the service. 
   - **Deploy Pipeline**: Given service with version and enviroment, it should go and deploy it.
@@ -77,7 +81,7 @@ Git Branch Policy
 
 Idea of promotional deployments is to move changes from lower environment to higher environments and each increment gives you a sense of more and more reliable changes coming upstream. Hence, it's important that every environment has similar infrastructure setup( at low scale) and same set of instructions, and deployable artifacts.
 
-- `QA Branch` : Ideally, every commit should be with least friction. Make your nightly build job pipeline to auto-commit the new version in this branch whenever the new application version is ready to trigger automatic deployment. `QA` are made to be broken.So, it should have zero manual intervention.
+- `QA Branch` : Ideally, every commit should make it here with least friction possible. Make your nightly build job pipeline to auto-commit the new version in this branch whenever the new application version is ready to trigger automatic deployment. `QA` are made to be broken, so failing fast is good. Hence, it should have zero manual intervention.
 - `Stage Branch`: That should be comparatively stable and very close to production. If it's broken then folks like capacity planning, regression testers will be very mad at you. Once you have a stable QA version ready, create a PR and merge it in this stage branch after peer review.
 - `Prod Branch`: Apply the same scrutiny here.
 
