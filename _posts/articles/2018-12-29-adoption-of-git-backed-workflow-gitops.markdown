@@ -18,9 +18,9 @@ Adoption of new workflows: GitOps
 ---
 
 When I first read about GitOps workflow by [weave.works](https://www.weave.works/blog/gitops-operations-by-pull-request), I was a bit surprised by their audacity.
-I mean moving your deploy button from a central policy & compliance controlled dashboard locked by active directory into the wild in git where it's visible to prying eyes, dying to commit to see their code up and running in production. That's really fearless move.
+I mean moving your deploy button from a central policy & compliance controlled dashboard locked by active directory into the wild in git where it's visible to prying eyes, dying to commit to see their code up and running in production. That's really a daunting move.
 
-Especially for a business where every outage means loss in revenue. Why would someone take chances with failures?
+Especially for a business where every outage means loss in revenue, why would someone take chances with failures?
 
 On second thought it all make sense. I can think of two main driving factor for adoption of gitops in coming days
 
