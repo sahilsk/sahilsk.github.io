@@ -21,11 +21,11 @@ Especially for a business where every outage means loss in revenue, why would so
 
 On second thought, in this cloud era, it all make sense. I can think of two main driving factor for adoption of gitops in coming days
 
-- **Velocity**: Gone are days when quarterly or monthly deployments were enough. So, we need to minimize manual intervention as least as we could. Excuse of security and compliance should not hinder adoption of new technology. With open mindset you can bring the lost velocity back to your team
+- **Velocity**: Gone are the days when quarterly or monthly deployments were enough. So, we need to minimize manual intervention as least as we could. Excuse of security and compliance should not hinder adoption of new technology. With open mindset you can bring the lost velocity back to your team
 - **Inefficiency of traditional processes** and **Adoption of more and more open-source tools**: People are trying their best to make this world a better place. Adoption of public clouds eg. AWS or Azure, has given all a common ground to solve a problem once and solve it for all. Tools like terraform, jenkins, and vast knowledge spread across stackoverflow is at your perusal. Battles have already been fought. Use their sacrifice to improve life of others.
 
 
-Now, lets talk about what are the pre-requisites. So, what has made such pure automation backed deployment workflows like GitOps possibles?
+Now, let's talk about what are the pre-requisites. So, what has made such pure automation backed deployment workflows like GitOps possibles?
 
 
 - **Automate every manual steps**: First and foremost be reasonable behind every process you have. Have a constructive arguments for having a manual step for a automatable workflow. Chances are you don't need those manual interventions.
@@ -36,7 +36,7 @@ Now, lets talk about what are the pre-requisites. So, what has made such pure au
   Every commit in qa branch is deployed in the qa environment. When QA guys give you a go-ahead for production, create a pull request out of QA branch and merge it in the master branch. This will be the trigger for deployment in the production. If anything fails, don't rollback anything manually. Commit, send a new pull request and repeat.
 
 
-Sounds easy but you can't go ahead and start doing gitops right away. You need a headstart. So, here are some simple steps to help you get staretd with gitOps.
+Sounds easy but you can't go ahead and start doing gitops right away. You need a headstart. So, here are some simple steps to help you get started with gitOps.
 
 
 ![GitOps Workflow](/images/gitops-gitrepo.jpg)
@@ -53,17 +53,17 @@ Sounds easy but you can't go ahead and start doing gitops right away. You need a
   - `notification channels: [Emails][,Slack channels]`
   - `maintainer address`
 
-4. Copy same descriptors in all the branches. By looking at those descriptors one should be able to tell which environment has what version of a paritcular serivce running. By looking at commits he should also be able to tell last deployments history.
+4. Copy same descriptors in all the branches. By looking at those descriptors one should be able to tell which environment has what version of a paritcular service running. By looking at commits he should also be able to tell last deployments history.
 5. Use jenkins to write following generic parametrized pipelines
   - **Healthcheck pipeline**: Given set of parameters eg. service name, it goes and run health check for the service. 
   - **Deploy Pipeline**: Given service with version and enviroment, it should go and deploy it.
   - **Smoke Test Pipeline**: Generic parametrized pipeline to run post deployment checks on a service specified
   - **Regression Test Pipeline**: Generic parametrized pipeline to run end-to-end tests for any service specificed in the run arguments.
-6. Now, with all the generic pipelines ready, you need to build a high-level pipeline that combine all these steps togethers. These will be our Release Pipelines. It should have a notification stage before and end of pipeline to notify stakeholders including JIRA.
+6. Now, with all the generic pipelines ready, you need to build a high-level pipeline that combine all these steps together. These will be our Release Pipelines. It should have a notification stage before and end of pipeline to notify stakeholders including JIRA.
   - **QA Release Pipeline**:  `Deploy Pipeline` + `Healthcheck Pipeline`
   - **Stage Release Pipeline**: `Deploy Pipeline` + `Healthcheck Pipeline` + `Regression Pipeline`
   - **Prod Release Pipeline**: `Deploy Pipeline` + `Healthcheck Pipeline` + `Smoke Test Pipeline`
-7. At this point you should be able to deploy your serivce using above release pipeline, passing parameters like serivce, version and environment to deploy any application in any envrionment. But only one flaw: It still require manual button press. Lets trigger these release pipeline using Git
+7. At this point you should be able to deploy your service using above release pipeline, passing parameters like service, version and environment to deploy any application in any envrionment. But only one flaw: It still require manual button press. Lets trigger these release pipeline using Git
 8. Git-Monitor Pipeline: This pipeline will track pushes in each of the branches and based on the diff using tools discussed above, will trigger any of the **Release Pipeline**. Be caseful for writing this pipeline. It should have following notable checks
   - Commit message must not contain any message like `skip deployment`. If it does, then you're not suppose to deploy this commit
   - Committer should be a whitelisted candidates
