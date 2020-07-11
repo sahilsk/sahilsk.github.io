@@ -10,7 +10,6 @@ image:
 comments: true
 share: true
 author: sahilsk
-date: 2015-07-21T16:25:58+05:30  
 date: 2018-12-29T16:33:43+05:30
 ---
 
